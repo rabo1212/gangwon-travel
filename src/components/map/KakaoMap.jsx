@@ -1,47 +1,59 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { Map as MapIcon, Maximize2, Minimize2 } from "lucide-react";
-
-const MARKER_COLORS = {
-  spot: "#0066CC",
-  meal: "#E85D04",
-};
 
 const DAY_COLORS = ["#0066CC", "#00A86B", "#E85D04"];
 
 export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
+  const overlaysRef = useRef([]);
+  const polylinesRef = useRef([]);
   const [mapReady, setMapReady] = useState(false);
   const [error, setError] = useState(null);
 
-  // 전체 장소 추출 (좌표 있는 것만)
-  const allPlaces = [];
-  itinerary.forEach((day, dayIdx) => {
-    day.schedule.forEach((item, itemIdx) => {
-      if (item.latitude && item.longitude) {
-        allPlaces.push({ ...item, dayIdx, itemIdx, orderNum: allPlaces.length + 1 });
-      }
+  // 좌표 있는 장소만 메모이제이션
+  const allPlaces = useMemo(() => {
+    const places = [];
+    itinerary.forEach((day, dayIdx) => {
+      day.schedule.forEach((item, itemIdx) => {
+        if (item.latitude && item.longitude) {
+          places.push({ ...item, dayIdx, itemIdx, orderNum: places.length + 1 });
+        }
+      });
     });
-  });
+    return places;
+  }, [itinerary]);
 
-  // 카카오맵 SDK 로드 & 초기화
+  // 카카오맵 SDK 로드 & 초기화 (재시도 포함)
   useEffect(() => {
-    if (!window.kakao || !window.kakao.maps) {
-      setError("카카오맵 SDK가 로드되지 않았습니다");
-      return;
+    let retryCount = 0;
+    const maxRetries = 10;
+
+    function tryInitMap() {
+      if (!window.kakao || !window.kakao.maps) {
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          setError("카카오맵 SDK가 로드되지 않았습니다");
+          return;
+        }
+        setTimeout(tryInitMap, 500);
+        return;
+      }
+
+      window.kakao.maps.load(() => {
+        if (!mapRef.current) return;
+
+        const map = new window.kakao.maps.Map(mapRef.current, {
+          center: new window.kakao.maps.LatLng(37.8, 128.5),
+          level: 10,
+        });
+
+        mapInstance.current = map;
+        setMapReady(true);
+      });
     }
 
-    window.kakao.maps.load(() => {
-      if (!mapRef.current) return;
-
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center: new window.kakao.maps.LatLng(37.8, 128.5), // 강원도 중심
-        level: 10,
-      });
-
-      mapInstance.current = map;
-      setMapReady(true);
-    });
+    tryInitMap();
   }, []);
 
   // 마커 & 폴리라인 표시
@@ -50,10 +62,13 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
 
     const map = mapInstance.current;
 
-    // 기존 오버레이 제거를 위해 새로 그리기
+    // 기존 오버레이 제거
+    overlaysRef.current.forEach((o) => o.setMap(null));
+    overlaysRef.current = [];
+    polylinesRef.current.forEach((p) => p.setMap(null));
+    polylinesRef.current = [];
+
     const bounds = new window.kakao.maps.LatLngBounds();
-    const markers = [];
-    const overlays = [];
 
     // Day별로 마커 + 폴리라인
     itinerary.forEach((day, dayIdx) => {
@@ -61,22 +76,18 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
       const dayPlaces = day.schedule.filter((p) => p.latitude && p.longitude);
       const linePath = [];
 
-      dayPlaces.forEach((place, placeIdx) => {
+      dayPlaces.forEach((place) => {
         const position = new window.kakao.maps.LatLng(place.latitude, place.longitude);
         bounds.extend(position);
         linePath.push(position);
 
-        // 번호 커스텀 오버레이
         const isSpot = place.type === "spot";
         const bgColor = isSpot ? dayColor : "#E85D04";
         const emoji = isSpot ? "🏔️" : "🍽️";
 
         const content = document.createElement("div");
         content.innerHTML = `
-          <div style="
-            position: relative;
-            cursor: pointer;
-          ">
+          <div style="position: relative; cursor: pointer;">
             <div style="
               background: ${bgColor};
               color: white;
@@ -113,7 +124,7 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
           yAnchor: 1.4,
         });
         overlay.setMap(map);
-        overlays.push(overlay);
+        overlaysRef.current.push(overlay);
       });
 
       // 폴리라인
@@ -126,6 +137,7 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
           strokeStyle: "solid",
         });
         polyline.setMap(map);
+        polylinesRef.current.push(polyline);
       }
     });
 
@@ -133,12 +145,7 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
     if (allPlaces.length > 0) {
       map.setBounds(bounds, 60, 60, 60, 60);
     }
-
-    // 클린업
-    return () => {
-      overlays.forEach((o) => o.setMap(null));
-    };
-  }, [mapReady, allPlaces.length]);
+  }, [mapReady, allPlaces, itinerary]);
 
   // expanded 변경 시 지도 리사이즈
   useEffect(() => {
@@ -153,7 +160,7 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
         mapInstance.current.setBounds(bounds, 60, 60, 60, 60);
       }
     }, 300);
-  }, [expanded]);
+  }, [expanded, mapReady, allPlaces]);
 
   if (error) {
     return (

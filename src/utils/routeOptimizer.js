@@ -161,14 +161,48 @@ function nearestNeighborOrder(places) {
   return ordered;
 }
 
+// ─── 맛집 스팟 → 식사 항목 변환 ───
+function foodSpotToMeal(foodSpot, regionalFoods) {
+  // 매칭되는 REGIONAL_FOODS 찾기 (레스토랑 정보 가져오기 위해)
+  const allRegionFoods = REGIONAL_FOODS[foodSpot.region] || [];
+  const matched = allRegionFoods.find((f) => {
+    // "춘천 닭갈비골목" ↔ "춘천 닭갈비" 등 부분 매칭
+    const spotClean = foodSpot.name.replace(/골목|거리|시장|마을|촌|항|어시장/g, "").trim();
+    const foodClean = f.name.trim();
+    return spotClean.includes(foodClean) || foodClean.includes(spotClean)
+      || spotClean.split(" ").some((w) => w.length >= 2 && foodClean.includes(w));
+  });
+
+  return {
+    name: foodSpot.name,
+    emoji: foodSpot.emoji,
+    description: foodSpot.description,
+    restaurants: matched?.restaurants || [],
+    latitude: foodSpot.latitude,
+    longitude: foodSpot.longitude,
+    region: foodSpot.region,
+    category: "식사",
+  };
+}
+
 // ─── 하루 일정 빌드 ───
 function buildDaySchedule(spots, foods, travelMode) {
   const schedule = [];
   let clock = 9 * 60 + 30; // 09:30
 
-  const orderedSpots = nearestNeighborOrder(spots);
+  // 맛집/미식 스팟 분리 → 식사 슬롯으로 이동
+  const tourSpots = spots.filter((s) => s.category !== "맛집/미식");
+  const foodSpots = spots.filter((s) => s.category === "맛집/미식");
+
+  // 맛집 스팟을 식사 항목으로 변환
+  const foodSpotMeals = foodSpots.map((s) => foodSpotToMeal(s));
+
+  const orderedSpots = nearestNeighborOrder(tourSpots);
   const mealFoods = foods.filter((f) => f.category === "식사");
   const cafeFoods = foods.filter((f) => f.category === "간식/카페");
+
+  // 식사 목록: 맛집 스팟 우선, 부족하면 autoAssignFoods 음식으로 채움
+  const allMeals = [...foodSpotMeals, ...mealFoods];
   let mealIdx = 0;
   let spotIdx = 0;
 
@@ -192,13 +226,14 @@ function buildDaySchedule(spots, foods, travelMode) {
   }
 
   // === 점심 ===
-  if (mealIdx < mealFoods.length) {
+  if (mealIdx < allMeals.length) {
     const lunchTime = Math.max(clock, 12 * 60);
-    const food = mealFoods[mealIdx];
+    const food = allMeals[mealIdx];
     schedule.push({
       time: formatTime(lunchTime), type: "meal", mealType: "점심",
       name: food.name, emoji: food.emoji, description: food.description,
       restaurants: food.restaurants,
+      latitude: food.latitude, longitude: food.longitude,
     });
     clock = lunchTime + 60 + 10;
     mealIdx++;
@@ -236,13 +271,14 @@ function buildDaySchedule(spots, foods, travelMode) {
   }
 
   // === 저녁 ===
-  if (mealIdx < mealFoods.length) {
+  if (mealIdx < allMeals.length) {
     const dinnerTime = Math.max(clock, 18 * 60);
-    const food = mealFoods[mealIdx];
+    const food = allMeals[mealIdx];
     schedule.push({
       time: formatTime(dinnerTime), type: "meal", mealType: "저녁",
       name: food.name, emoji: food.emoji, description: food.description,
       restaurants: food.restaurants,
+      latitude: food.latitude, longitude: food.longitude,
     });
     mealIdx++;
   }
@@ -296,9 +332,26 @@ function autoAssignFoods(daySpots) {
     regionFoods.forEach((f) => foods.push({ ...f, region }));
   }
 
-  // 중복 제거 후 식사 2개 + 카페 1개 한도
-  const meals = foods.filter((f) => f.category === "식사").slice(0, 2);
-  const cafes = foods.filter((f) => f.category === "간식/카페").slice(0, 1);
+  // 맛집/미식 스팟과 중복되는 음식 제거
+  const foodSpotNames = daySpots
+    .filter((s) => s.category === "맛집/미식")
+    .map((s) => s.name);
+
+  const filtered = foods.filter((f) => {
+    return !foodSpotNames.some((spotName) => {
+      const spotClean = spotName.replace(/골목|거리|시장|마을|촌|항|어시장/g, "").trim();
+      const foodClean = f.name.trim();
+      return spotClean.includes(foodClean) || foodClean.includes(spotClean)
+        || spotClean.split(" ").some((w) => w.length >= 2 && foodClean.includes(w));
+    });
+  });
+
+  // 맛집 스팟이 점심/저녁을 차지하므로, 필요한 식사 수를 줄임
+  const foodSpotCount = foodSpotNames.length;
+  const neededMeals = Math.max(0, 2 - foodSpotCount);
+
+  const meals = filtered.filter((f) => f.category === "식사").slice(0, neededMeals);
+  const cafes = filtered.filter((f) => f.category === "간식/카페").slice(0, 1);
   return [...meals, ...cafes];
 }
 
