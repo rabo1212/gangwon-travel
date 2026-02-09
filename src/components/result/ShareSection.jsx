@@ -54,7 +54,7 @@ function ReceiptCard({ route, zone, vibes, duration, travelMode }) {
   return (
     <div style={{
       width: 400, fontFamily: "'SF Mono', 'Fira Code', 'Consolas', monospace",
-      background: "#FFFFFF", borderRadius: 24, overflow: "hidden",
+      background: "#FFFFFF", color: "#1A1A2E", borderRadius: 24, overflow: "hidden",
       boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
     }}>
       {/* 상단 딥네이비 바 */}
