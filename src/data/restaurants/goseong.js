@@ -101,8 +101,6 @@ export const goseongRestaurants = [
     priceRange: "16,000~24,000원",
     hours: "11:00~20:30 (수 휴무)",
     address: "강원특별자치도 고성군 토성면 봉포해변길 35",
-    latitude: 37.2655710320342,
-    longitude: 128.528161454524,
     description: "고성 대게살을 듬뿍 넣은 크림파스타가 시그니처인 해변 레스토랑",
   },
   {
@@ -143,9 +141,7 @@ export const goseongRestaurants = [
     priceRange: "3,500~7,000원",
     hours: "10:00~18:00 (일 휴무)",
     address: "강원특별자치도 고성군 간성읍 수성로 21",
-    latitude: 35.8779022977114,
-    longitude: 128.578494017957,
-    description: "간성시장 입구에서 갓 찐 왕만두와 매콤 떡볶이를 파는 분식점",
+description: "간성시장 입구에서 갓 찐 왕만두와 매콤 떡볶이를 파는 분식점",
   },
   {
     name: "가쓰라",

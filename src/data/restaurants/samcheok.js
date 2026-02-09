@@ -35,9 +35,7 @@ export const samcheokRestaurants = [
     priceRange: "8,000~10,000원",
     hours: "07:00~19:00 (연중무휴)",
     address: "강원특별자치도 삼척시 도계읍 궁촌길 12",
-    latitude: 36.3423743141938,
-    longitude: 126.596602849907,
-    description: "40년 전통 콩을 직접 갈아 만드는 순두부 전문점",
+description: "40년 전통 콩을 직접 갈아 만드는 순두부 전문점",
   },
   {
     name: "동해바다곰치국",
@@ -115,9 +113,7 @@ export const samcheokRestaurants = [
     priceRange: "7,000~15,000원",
     hours: "11:00~20:30 (월 휴무)",
     address: "강원특별자치도 삼척시 성내동 중앙시장길 8",
-    latitude: 37.471703414500226,
-    longitude: 126.62392055068015,
-    description: "삼척 중앙시장 인근 50년 전통의 중화요리 맛집",
+description: "삼척 중앙시장 인근 50년 전통의 중화요리 맛집",
   },
   {
     name: "이사부카페",
@@ -181,8 +177,6 @@ export const samcheokRestaurants = [
     priceRange: "3,500~7,500원",
     hours: "08:30~20:00 (수 휴무)",
     address: "강원특별자치도 삼척시 근덕면 삼척로 2050",
-    latitude: 37.7730456998502,
-    longitude: 128.94662771442,
     description: "쏠비치 해변 근처 매일 아침 굽는 수제 케이크가 유명한 베이커리",
   },
 ];

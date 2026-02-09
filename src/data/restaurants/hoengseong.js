@@ -108,9 +108,7 @@ export const hoengseongRestaurants = [
     priceRange: "14,000~22,000원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 횡성군 횡성읍 문화체육로 18",
-    latitude: 37.540552980105886,
-    longitude: 126.99644706354334,
-    description: "이탈리안 셰프가 운영하는 횡성 유일 정통 파스타집",
+description: "이탈리안 셰프가 운영하는 횡성 유일 정통 파스타집",
   },
   {
     name: "버거앤그릴",
@@ -122,9 +120,7 @@ export const hoengseongRestaurants = [
     priceRange: "9,000~14,000원",
     hours: "11:00~20:30 (화 휴무)",
     address: "강원특별자치도 횡성군 횡성읍 한우로 78",
-    latitude: 36.7967941938638,
-    longitude: 127.061403066493,
-    description: "두툼한 수제 패티가 특징인 동네 수제버거 맛집",
+description: "두툼한 수제 패티가 특징인 동네 수제버거 맛집",
   },
 
   // === 일식 ===
@@ -152,8 +148,6 @@ export const hoengseongRestaurants = [
     priceRange: "7,000~16,000원",
     hours: "11:00~20:30 (일 휴무)",
     address: "강원특별자치도 횡성군 횡성읍 중앙로 80",
-    latitude: 37.279490263248505,
-    longitude: 127.01735359041682,
     description: "횡성읍 30년 전통 중국집, 유니짜장과 탕수육이 인기 메뉴",
   },
 

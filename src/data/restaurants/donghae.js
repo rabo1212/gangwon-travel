@@ -23,8 +23,6 @@ export const donghaeRestaurants = [
     priceRange: "1만~2만원",
     hours: "09:30~20:30 (월 휴무)",
     address: "강원특별자치도 동해시 묵호진동로 27",
-    latitude: 37.3912034753964,
-    longitude: 127.116498939339,
     description: "여름철 시원한 한치물회로 유명한 항구 맛집",
   },
   {
@@ -93,9 +91,7 @@ export const donghaeRestaurants = [
     priceRange: "1만~2만원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 동해시 해안로 710",
-    latitude: 34.93595435894007,
-    longitude: 128.51806609705648,
-    description: "동해 바다가 보이는 오션뷰 파스타 전문점",
+description: "동해 바다가 보이는 오션뷰 파스타 전문점",
   },
   {
     name: "더그릴",

@@ -79,9 +79,7 @@ export const gangneungRestaurants = [
     priceRange: "5,000~9,000원",
     hours: "09:00~22:00 (연중무휴)",
     address: "강원특별자치도 강릉시 해안로604번길 36",
-    latitude: 35.789788116115,
-    longitude: 128.782981092272,
-    description: "안목해변 바다뷰 감성 카페의 대명사",
+description: "안목해변 바다뷰 감성 카페의 대명사",
   },
   {
     name: "테라로사 커피공장",
@@ -107,9 +105,7 @@ export const gangneungRestaurants = [
     priceRange: "1만~3만원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 강릉시 경강로 2021",
-    latitude: 37.52116207670384,
-    longitude: 126.96884293090206,
-    description: "미슐랭 가이드에 소개된 프렌치 감성 레스토랑",
+description: "미슐랭 가이드에 소개된 프렌치 감성 레스토랑",
   },
   {
     name: "뜨레봉",
@@ -133,8 +129,6 @@ export const gangneungRestaurants = [
     priceRange: "8,000~12,000원",
     hours: "07:00~20:00 (일 휴무)",
     address: "강원특별자치도 강릉시 토성로 11",
-    latitude: 37.5167393588321,
-    longitude: 127.113214399077,
     description: "강릉 로컬 단골이 많은 정갈한 한식 백반집",
   },
   {
@@ -147,9 +141,7 @@ export const gangneungRestaurants = [
     priceRange: "1만~2만원",
     hours: "11:00~20:30 (수 휴무)",
     address: "강원특별자치도 강릉시 경강로 2104",
-    latitude: 37.27210896894047,
-    longitude: 126.95771729724011,
-    description: "바삭한 수제 돈카츠로 줄서는 맛집",
+description: "바삭한 수제 돈카츠로 줄서는 맛집",
   },
   {
     name: "매운떡볶이 연구소",
@@ -161,9 +153,7 @@ export const gangneungRestaurants = [
     priceRange: "4,000~8,000원",
     hours: "11:00~21:00 (연중무휴)",
     address: "강원특별자치도 강릉시 금성로 12",
-    latitude: 37.6639819346367,
-    longitude: 126.889408257988,
-    description: "강릉 중앙시장 근처 인기 분식 맛집",
+description: "강릉 중앙시장 근처 인기 분식 맛집",
   },
   {
     name: "강릉닭강정본점",
@@ -203,8 +193,6 @@ export const gangneungRestaurants = [
     priceRange: "3,500~6,000원",
     hours: "09:00~18:00 (일 휴무)",
     address: "강원특별자치도 강릉시 주문진읍 해안로 1580",
-    latitude: 36.649805088815945,
-    longitude: 127.46334597030393,
-    description: "주문진 어시장 앞 어머니의 손맛이 느껴지는 분식집",
+description: "주문진 어시장 앞 어머니의 손맛이 느껴지는 분식집",
   },
 ];

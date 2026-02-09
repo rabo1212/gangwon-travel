@@ -169,9 +169,7 @@ export const injeRestaurants = [
     priceRange: "10,000~15,000원",
     hours: "11:00~20:30 (화 휴무)",
     address: "강원특별자치도 인제군 인제읍 비봉로 55",
-    latitude: 35.230124068519444,
-    longitude: 129.08578799715528,
-    description: "두툼한 등심을 바삭하게 튀겨낸 수제 돈카츠와 우동 세트 전문점",
+description: "두툼한 등심을 바삭하게 튀겨낸 수제 돈카츠와 우동 세트 전문점",
   },
   {
     name: "카페 설악담",

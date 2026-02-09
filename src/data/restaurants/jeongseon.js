@@ -9,8 +9,6 @@ export const jeongseonRestaurants = [
     priceRange: "9,000~11,000원",
     hours: "10:00~19:00 (화 휴무)",
     address: "강원특별자치도 정선군 정선읍 봉양리 아리랑로 55",
-    latitude: 37.56281393675647,
-    longitude: 127.01506259340553,
     description: "정선 감자로 빚은 옹심이와 칼국수가 유명한 향토 맛집",
   },
   {
@@ -111,9 +109,7 @@ export const jeongseonRestaurants = [
     priceRange: "7,000~15,000원",
     hours: "11:00~20:00 (일 휴무)",
     address: "강원특별자치도 정선군 정선읍 중앙로 42",
-    latitude: 35.5078251254445,
-    longitude: 129.429423440105,
-    description: "정선읍 45년 전통 중화요리 맛집, 해물짬뽕이 인기",
+description: "정선읍 45년 전통 중화요리 맛집, 해물짬뽕이 인기",
   },
   {
     name: "카페레일바이크",
@@ -165,8 +161,6 @@ export const jeongseonRestaurants = [
     priceRange: "10,000~15,000원",
     hours: "11:00~20:30 (월 휴무)",
     address: "강원특별자치도 정선군 정선읍 중앙로 58",
-    latitude: 38.1049580385268,
-    longitude: 127.707784181487,
     description: "두툼한 수제 돈카츠와 따뜻한 우동을 함께 즐기는 일식 전문점",
   },
   {

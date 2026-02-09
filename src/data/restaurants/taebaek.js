@@ -103,9 +103,7 @@ export const taebaekRestaurants = [
     priceRange: "2만~4만원",
     hours: "11:30~21:30 (화 휴무)",
     address: "강원특별자치도 태백시 번영로 55",
-    latitude: 34.7510302880319,
-    longitude: 127.748803585287,
-    description: "태백 시내 유일 정통 스테이크 다이닝",
+description: "태백 시내 유일 정통 스테이크 다이닝",
   },
   {
     name: "태백반점",
@@ -131,9 +129,7 @@ export const taebaekRestaurants = [
     priceRange: "4,000~7,000원",
     hours: "10:00~21:00 (연중무휴)",
     address: "강원특별자치도 태백시 태백산로 4834",
-    latitude: 35.7928296423604,
-    longitude: 127.434404308104,
-    description: "해발 700m 고원에서 마시는 향기로운 커피",
+description: "해발 700m 고원에서 마시는 향기로운 커피",
   },
   {
     name: "엄마손분식",

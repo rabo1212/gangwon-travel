@@ -89,9 +89,7 @@ export const yeongwolRestaurants = [
     priceRange: "13,000~19,000원",
     hours: "11:30~20:30 (월 휴무)",
     address: "강원특별자치도 영월군 영월읍 중앙로 67",
-    latitude: 37.5416353337895,
-    longitude: 126.987127774101,
-    description: "영월읍 골목 속 아담한 이탈리안 파스타 전문점",
+description: "영월읍 골목 속 아담한 이탈리안 파스타 전문점",
   },
   {
     name: "영월피자공방",
@@ -117,9 +115,7 @@ export const yeongwolRestaurants = [
     priceRange: "7,000~18,000원",
     hours: "11:00~20:00 (일 휴무)",
     address: "강원특별자치도 영월군 영월읍 중앙로 95",
-    latitude: 36.30562865351197,
-    longitude: 127.45418578199688,
-    description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유명",
+description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유명",
   },
   {
     name: "카페단종",
@@ -167,9 +163,7 @@ export const yeongwolRestaurants = [
     priceRange: "10,000~15,000원",
     hours: "11:00~20:30 (월 휴무)",
     address: "강원특별자치도 영월군 영월읍 하송로 42",
-    latitude: 35.9294949733724,
-    longitude: 128.546678630445,
-    description: "직접 빻은 생빵가루로 바삭하게 튀겨내는 수제 돈카츠 전문점",
+description: "직접 빻은 생빵가루로 바삭하게 튀겨내는 수제 돈카츠 전문점",
   },
   {
     name: "동강베이커리",

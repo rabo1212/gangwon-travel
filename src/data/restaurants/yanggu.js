@@ -115,9 +115,7 @@ export const yangguRestaurants = [
     priceRange: "8,000~13,000원",
     hours: "11:00~20:00 (일 휴무)",
     address: "강원특별자치도 양구군 양구읍 중앙로 28",
-    latitude: 37.471703414500226,
-    longitude: 126.62392055068015,
-    description: "양구읍 유일의 중국집으로 볶음짬뽕과 유니짜장이 대표 메뉴",
+description: "양구읍 유일의 중국집으로 볶음짬뽕과 유니짜장이 대표 메뉴",
   },
   {
     name: "카페 박수근",

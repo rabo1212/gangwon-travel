@@ -93,9 +93,7 @@ export const sokchoRestaurants = [
     priceRange: "1만~2만원",
     hours: "10:00~21:00 (화 휴무)",
     address: "강원특별자치도 속초시 해오름로 188",
-    latitude: 35.25908342898341,
-    longitude: 129.23403404023273,
-    description: "속초해변 앞 오션뷰 브런치 카페 겸 레스토랑",
+description: "속초해변 앞 오션뷰 브런치 카페 겸 레스토랑",
   },
   {
     name: "테이블포유",
@@ -177,9 +175,7 @@ export const sokchoRestaurants = [
     priceRange: "9,000~13,000원",
     hours: "11:00~20:30 (수 휴무)",
     address: "강원특별자치도 속초시 번영로 98",
-    latitude: 36.8104651515331,
-    longitude: 127.106967072236,
-    description: "깊은 맛의 미소 육수가 인기인 라멘 전문점",
+description: "깊은 맛의 미소 육수가 인기인 라멘 전문점",
   },
   {
     name: "파도베이커리",

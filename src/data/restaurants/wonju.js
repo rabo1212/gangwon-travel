@@ -37,8 +37,6 @@ export const wonjuRestaurants = [
     priceRange: "7,000~10,000원",
     hours: "10:30~20:30 (일 휴무)",
     address: "강원특별자치도 원주시 중앙로 116",
-    latitude: 37.598904297819,
-    longitude: 127.13594356609,
     description: "직접 반죽한 쫄깃한 면발이 일품인 칼국수집",
   },
   {
@@ -51,9 +49,7 @@ export const wonjuRestaurants = [
     priceRange: "1만~2만원",
     hours: "11:00~22:00 (연중무휴)",
     address: "강원특별자치도 원주시 시청로 15",
-    latitude: 37.4819987075459,
-    longitude: 126.881605510288,
-    description: "매콤한 양념이 중독적인 쭈꾸미 전문점",
+description: "매콤한 양념이 중독적인 쭈꾸미 전문점",
   },
   {
     name: "삼정순두부",
@@ -65,8 +61,6 @@ export const wonjuRestaurants = [
     priceRange: "7,000~10,000원",
     hours: "07:00~20:00 (화 휴무)",
     address: "강원특별자치도 원주시 행구로 130",
-    latitude: 38.1885184848907,
-    longitude: 127.287894055216,
     description: "아침부터 문 여는 깊은 맛의 순두부 전문점",
   },
   {
@@ -79,9 +73,7 @@ export const wonjuRestaurants = [
     priceRange: "8,000~15,000원",
     hours: "10:00~21:00 (수 휴무)",
     address: "강원특별자치도 원주시 치악로 1926",
-    latitude: 35.7838513487372,
-    longitude: 129.311802036553,
-    description: "치악산 입구 손두부로 소문난 맛집",
+description: "치악산 입구 손두부로 소문난 맛집",
   },
   {
     name: "오스테리아 원주",
@@ -133,8 +125,6 @@ export const wonjuRestaurants = [
     priceRange: "3만~5만원",
     hours: "12:00~21:30 (월 휴무)",
     address: "강원특별자치도 원주시 봉화로 53",
-    latitude: 37.50286151103087,
-    longitude: 127.02466578751873,
     description: "제철 식재료를 사용한 정통 오마카세 코스",
   },
   {

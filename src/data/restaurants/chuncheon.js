@@ -79,9 +79,7 @@ export const chuncheonRestaurants = [
     priceRange: "1만~2만원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 춘천시 스포츠타운길 160",
-    latitude: 35.8780250821218,
-    longitude: 128.594574934684,
-    description: "의암호 뷰가 아름다운 감성 이탈리안 레스토랑",
+description: "의암호 뷰가 아름다운 감성 이탈리안 레스토랑",
   },
   {
     name: "쉬즈베이커리",
@@ -149,9 +147,7 @@ export const chuncheonRestaurants = [
     priceRange: "4,000~7,000원",
     hours: "10:00~20:00 (일 휴무)",
     address: "강원특별자치도 춘천시 조양동 63-8",
-    latitude: 36.781474794983545,
-    longitude: 127.00443619191982,
-    description: "춘천 로컬들이 사랑하는 추억의 분식집",
+description: "춘천 로컬들이 사랑하는 추억의 분식집",
   },
   {
     name: "춘천옛날통닭",
@@ -191,8 +187,6 @@ export const chuncheonRestaurants = [
     priceRange: "3,000~7,000원",
     hours: "08:00~21:00 (연중무휴)",
     address: "강원특별자치도 춘천시 스포츠타운길 140",
-    latitude: 35.5545664250177,
-    longitude: 129.318605066514,
-    description: "매일 아침 갓 구운 빵이 나오는 동네 베이커리",
+description: "매일 아침 갓 구운 빵이 나오는 동네 베이커리",
   },
 ];
