@@ -22,7 +22,7 @@ export default function ItineraryDay({
       </div>
 
       <div
-        className="space-y-0 ml-5 pl-6"
+        className="space-y-3 ml-5 pl-6"
         style={{ borderLeft: `2px solid ${isDark ? "rgba(0,102,204,0.3)" : "#DBEAFE"}` }}
       >
         {day.schedule.map((item, idx) => {
@@ -124,7 +124,7 @@ export default function ItineraryDay({
                   border: `1px solid ${isDark ? "rgba(147,51,234,0.2)" : "#E9D5FF"}`,
                 }}
               >
-                <AccommodationCard item={accom} />
+                <AccommodationCard item={accom} isDark={isDark} />
               </div>
             ))}
           </div>

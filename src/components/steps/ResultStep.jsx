@@ -262,7 +262,7 @@ export default function ResultStep({ wizard, route, isDark }) {
         />
 
         {/* 일정 */}
-        <div className="px-3 sm:px-4 pb-36 sm:pb-40">
+        <div className="px-3 sm:px-4 pb-24 result-container">
           {filteredItinerary.map((day) => {
             const originalDayIdx = displayRoute.itinerary.indexOf(day);
             return (
@@ -299,7 +299,7 @@ export default function ResultStep({ wizard, route, isDark }) {
 
       {/* 하단 버튼 */}
       <div
-        className="fixed bottom-0 left-0 right-0 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 flex gap-2 sm:gap-3 z-50"
+        className="fixed bottom-0 left-0 right-0 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 flex gap-2 sm:gap-3 z-50 safe-bottom"
         style={{
           background: "color-mix(in srgb, var(--bg-secondary) 95%, transparent)",
           borderTop: "1px solid var(--border-color)",

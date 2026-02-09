@@ -30,24 +30,24 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
 
         {/* 이미지 갤러리 */}
         <div className="px-4 pb-3">
-          <div className="grid grid-cols-3 gap-1.5 rounded-xl overflow-hidden">
+          <div className="grid grid-cols-3 gap-1.5 rounded-xl overflow-hidden" style={{ aspectRatio: "3/2" }}>
             <img
               src={images[0]}
               alt={spot.name}
-              className="col-span-2 w-full h-[160px] object-cover"
+              className="col-span-2 w-full h-full object-cover"
               loading="lazy"
             />
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1.5 h-full">
               <img
                 src={images[1]}
                 alt={spot.name}
-                className="w-full h-[77px] object-cover"
+                className="w-full flex-1 object-cover"
                 loading="lazy"
               />
               <img
                 src={images[2]}
                 alt={spot.name}
-                className="w-full h-[77px] object-cover"
+                className="w-full flex-1 object-cover"
                 loading="lazy"
               />
             </div>
@@ -62,10 +62,10 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
             </h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center"
+              className="w-11 h-11 rounded-full flex items-center justify-center active:scale-95 transition-transform"
               style={{ background: "var(--bg-input)" }}
             >
-              <X className="w-4 h-4" style={{ color: "var(--text-muted)" }} />
+              <X className="w-5 h-5" style={{ color: "var(--text-secondary)" }} />
             </button>
           </div>
 
@@ -113,7 +113,7 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
               style={{ background: isDark ? "rgba(245,158,11,0.1)" : "#FFFBEB" }}
             >
               <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-              <p className="text-sm text-amber-500">{spot.tip}</p>
+              <p className="text-sm" style={{ color: isDark ? "#FBBF24" : "#B45309" }}>{spot.tip}</p>
             </div>
           )}
 

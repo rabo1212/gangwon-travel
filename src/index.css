@@ -46,3 +46,39 @@ body {
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
+
+/* safe area - 노치/홈바 대응 */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* 키오스크 세로 모드 (1080x1920 등 세로형 대형 디스플레이) */
+@media (min-width: 768px) and (min-height: 1200px) and (orientation: portrait) {
+  .kiosk-scale {
+    font-size: 1.15rem;
+  }
+  .kiosk-scale h1 { font-size: 2rem; }
+  .kiosk-scale h2 { font-size: 1.5rem; }
+  .kiosk-scale h3 { font-size: 1.25rem; }
+}
+
+/* 데스크톱/태블릿 가로 - 카드 너비 제한 */
+@media (min-width: 768px) {
+  .result-container {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up {
+    animation: none;
+  }
+  * {
+    transition-duration: 0.01ms !important;
+  }
+}

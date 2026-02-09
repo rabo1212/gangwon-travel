@@ -5,7 +5,7 @@ export default function DayTabs({ days, activeDay, onSelectDay }) {
     <div className="flex gap-2 px-4 py-3 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
       <button
         onClick={() => onSelectDay(null)}
-        className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
+        className={`shrink-0 px-5 min-h-[44px] rounded-full text-sm font-bold transition-all active:scale-95 ${
           activeDay === null
             ? "bg-[#0066CC] text-white shadow-md"
             : ""
@@ -18,7 +18,7 @@ export default function DayTabs({ days, activeDay, onSelectDay }) {
         <button
           key={idx}
           onClick={() => onSelectDay(idx)}
-          className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
+          className={`shrink-0 px-5 min-h-[44px] rounded-full text-sm font-bold transition-all active:scale-95 ${
             activeDay === idx
               ? "bg-[#0066CC] text-white shadow-md"
               : ""
