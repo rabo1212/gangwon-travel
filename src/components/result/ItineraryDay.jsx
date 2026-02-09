@@ -3,7 +3,7 @@ import SpotCard from "./SpotCard";
 import RestaurantCard from "./RestaurantCard";
 import AccommodationCard from "./AccommodationCard";
 
-export default function ItineraryDay({ day }) {
+export default function ItineraryDay({ day, dayIndex, alternatives, onSwapRequest }) {
   return (
     <div className="mt-6">
       <div className="flex items-center gap-3 mb-4">
@@ -28,7 +28,14 @@ export default function ItineraryDay({ day }) {
                 {item.type === "meal" ? (
                   <RestaurantCard item={item} />
                 ) : (
-                  <SpotCard item={item} />
+                  <SpotCard
+                    item={item}
+                    onSwap={
+                      alternatives && alternatives[item.name]
+                        ? () => onSwapRequest(dayIndex, idx, item)
+                        : undefined
+                    }
+                  />
                 )}
               </div>
             </div>
@@ -36,7 +43,7 @@ export default function ItineraryDay({ day }) {
         ))}
       </div>
 
-      {/* 추천 숙소 섹션 (2~3개) */}
+      {/* 추천 숙소 섹션 */}
       {day.accommodationOptions && day.accommodationOptions.length > 0 && (
         <div className="mt-6 ml-5">
           <div className="flex items-center gap-2 mb-3">

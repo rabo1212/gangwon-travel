@@ -1,4 +1,6 @@
 import { haversineDistance, estimatedTravelTime } from "./distance";
+import { ALL_SPOTS } from "../data/spots";
+import { REGIONAL_FOODS } from "../data/regionalFoods";
 import { ALL_ACCOMMODATIONS } from "../data/accommodations";
 import { REGIONS } from "../data/regions";
 
@@ -26,11 +28,114 @@ function getDayCount(duration) {
   return 3;
 }
 
-// ─── Nearest Neighbor 경로 최적화 ───
-// 좌표가 있는 장소들을 가장 가까운 순서로 정렬
+// ─── Zone 내 스팟 가져오기 ───
+function getSpotsByZone(zone) {
+  const spots = [];
+  zone.regions.forEach((region) => {
+    const regionSpots = ALL_SPOTS[region] || [];
+    regionSpots.forEach((spot) => {
+      if (spot.latitude && spot.longitude) {
+        spots.push({ ...spot, region });
+      }
+    });
+  });
+  return spots;
+}
+
+// ─── Vibe 기반 점수 매기기 ───
+function scoreByVibes(spots, selectedVibes) {
+  return spots.map((spot) => {
+    let score = 1; // 기본 점수
+    if (selectedVibes.includes(spot.category)) {
+      score += 3; // 카테고리 직접 매칭
+    }
+    if (spot.photoSpot && selectedVibes.includes("포토스팟/감성")) score += 1;
+    if (spot.trekking && selectedVibes.includes("자연/트레킹")) score += 1;
+    return { ...spot, vibeScore: score };
+  });
+}
+
+// ─── 20분 제한 클러스터 생성 ───
+function buildTimeLimitedClusters(spots, travelMode, maxMinutes = 20) {
+  if (spots.length === 0) return [];
+
+  // 점수 높은 순으로 정렬
+  const sorted = [...spots].sort((a, b) => b.vibeScore - a.vibeScore);
+  const used = new Set();
+  const clusters = [];
+
+  for (const seed of sorted) {
+    if (used.has(seed.name + seed.region)) continue;
+
+    const cluster = [seed];
+    used.add(seed.name + seed.region);
+
+    // 이 시드에서 maxMinutes 이내에 도달 가능한 스팟 추가
+    for (const candidate of sorted) {
+      if (used.has(candidate.name + candidate.region)) continue;
+
+      // 클러스터 내 모든 스팟과 20분 이내인지 확인
+      const allWithin = cluster.every((member) => {
+        const dist = haversineDistance(
+          member.latitude, member.longitude,
+          candidate.latitude, candidate.longitude
+        );
+        const time = estimatedTravelTime(dist, travelMode);
+        return time <= maxMinutes;
+      });
+
+      if (allWithin) {
+        cluster.push(candidate);
+        used.add(candidate.name + candidate.region);
+      }
+    }
+
+    clusters.push(cluster);
+  }
+
+  return clusters;
+}
+
+// ─── 클러스터 점수 계산 ───
+function clusterScore(cluster) {
+  return cluster.reduce((sum, s) => sum + s.vibeScore, 0);
+}
+
+// ─── Day별 클러스터 배정 ───
+function assignClustersToDay(clusters, days, spotsPerDay = 4) {
+  // 클러스터를 총 점수순으로 정렬
+  const sorted = [...clusters].sort((a, b) => clusterScore(b) - clusterScore(a));
+
+  const dayGroups = Array.from({ length: days }, () => ({ spots: [], cluster: null }));
+
+  // 최고 점수 클러스터부터 Day에 배분
+  let dayIdx = 0;
+  for (const cluster of sorted) {
+    if (dayGroups[dayIdx].spots.length >= spotsPerDay) {
+      dayIdx++;
+      if (dayIdx >= days) break;
+    }
+    if (dayIdx >= days) break;
+
+    const remaining = spotsPerDay - dayGroups[dayIdx].spots.length;
+    const toAdd = cluster.slice(0, remaining);
+    dayGroups[dayIdx].spots.push(...toAdd);
+    if (!dayGroups[dayIdx].cluster) dayGroups[dayIdx].cluster = cluster;
+  }
+
+  // 빈 Day가 있으면 첫 번째 Day에서 분배
+  for (let d = 0; d < days; d++) {
+    if (dayGroups[d].spots.length === 0 && dayGroups[0].spots.length > 1) {
+      dayGroups[d].spots.push(dayGroups[0].spots.pop());
+    }
+  }
+
+  return dayGroups;
+}
+
+// ─── Nearest Neighbor 순서 최적화 ───
 function nearestNeighborOrder(places) {
   if (places.length <= 1) return [...places];
-
   const remaining = [...places];
   const ordered = [remaining.shift()];
 
@@ -56,96 +161,12 @@ function nearestNeighborOrder(places) {
   return ordered;
 }
 
-// ─── K-Means 클러스터링 (다일 여행) ───
-// 장소들을 k개 그룹으로 나눔 (지리적 근접성 기반)
-function kMeansClusters(places, k) {
-  if (places.length <= k) {
-    return places.map((p) => [p]);
-  }
-
-  // 초기 중심: 장소 중 가장 먼 k개 선택
-  const centers = [places[0]];
-  while (centers.length < k) {
-    let maxDist = -1;
-    let farthest = null;
-    for (const p of places) {
-      if (centers.some((c) => c.name === p.name)) continue;
-      const minCenterDist = Math.min(
-        ...centers.map((c) =>
-          haversineDistance(p.latitude, p.longitude, c.latitude, c.longitude)
-        )
-      );
-      if (minCenterDist > maxDist) {
-        maxDist = minCenterDist;
-        farthest = p;
-      }
-    }
-    if (farthest) centers.push(farthest);
-  }
-
-  let clusters = Array.from({ length: k }, () => []);
-
-  // 10회 반복
-  for (let iter = 0; iter < 10; iter++) {
-    clusters = Array.from({ length: k }, () => []);
-
-    // 각 장소를 가장 가까운 중심에 배정
-    for (const p of places) {
-      let minDist = Infinity;
-      let bestCluster = 0;
-      for (let c = 0; c < centers.length; c++) {
-        const dist = haversineDistance(
-          p.latitude, p.longitude,
-          centers[c].latitude, centers[c].longitude
-        );
-        if (dist < minDist) {
-          minDist = dist;
-          bestCluster = c;
-        }
-      }
-      clusters[bestCluster].push(p);
-    }
-
-    // 중심 재계산
-    for (let c = 0; c < k; c++) {
-      if (clusters[c].length === 0) continue;
-      const avgLat = clusters[c].reduce((sum, p) => sum + p.latitude, 0) / clusters[c].length;
-      const avgLon = clusters[c].reduce((sum, p) => sum + p.longitude, 0) / clusters[c].length;
-      centers[c] = { latitude: avgLat, longitude: avgLon };
-    }
-  }
-
-  // 빈 클러스터 제거
-  return clusters.filter((c) => c.length > 0);
-}
-
-// ─── 클러스터를 지리적 순서로 정렬 (서→동, 남→북) ───
-function sortClustersByLocation(clusters) {
-  return clusters.sort((a, b) => {
-    const aCenter = {
-      lat: a.reduce((s, p) => s + p.latitude, 0) / a.length,
-      lon: a.reduce((s, p) => s + p.longitude, 0) / a.length,
-    };
-    const bCenter = {
-      lat: b.reduce((s, p) => s + p.latitude, 0) / b.length,
-      lon: b.reduce((s, p) => s + p.longitude, 0) / b.length,
-    };
-    // 경도 기준 (서→동)
-    return aCenter.lon - bCenter.lon;
-  });
-}
-
 // ─── 하루 일정 빌드 ───
-function buildDaySchedule(spots, foods, dayIndex, totalDays, travelMode) {
+function buildDaySchedule(spots, foods, travelMode) {
   const schedule = [];
-  let clock = 9 * 60 + 30; // 09:30 시작
+  let clock = 9 * 60 + 30; // 09:30
 
-  // 관광지만 Nearest Neighbor로 정렬 (음식은 좌표 없음)
-  const withCoords = spots.filter((s) => s.latitude && s.longitude);
-  const withoutCoords = spots.filter((s) => !s.latitude || !s.longitude);
-  const orderedSpots = [...nearestNeighborOrder(withCoords), ...withoutCoords];
-
-  // 식사용 음식 (간식/카페 제외)
+  const orderedSpots = nearestNeighborOrder(spots);
   const mealFoods = foods.filter((f) => f.category === "식사");
   const cafeFoods = foods.filter((f) => f.category === "간식/카페");
   let mealIdx = 0;
@@ -157,13 +178,13 @@ function buildDaySchedule(spots, foods, dayIndex, totalDays, travelMode) {
     const dur = parseDurationMin(spot.duration);
     schedule.push({ time: formatTime(clock), type: "spot", ...spot });
 
-    let travelTime = 15;
-    if (spotIdx + 1 < orderedSpots.length && spot.latitude && orderedSpots[spotIdx + 1].latitude) {
+    let travelTime = 10;
+    if (spotIdx + 1 < orderedSpots.length) {
       const dist = haversineDistance(
         spot.latitude, spot.longitude,
         orderedSpots[spotIdx + 1].latitude, orderedSpots[spotIdx + 1].longitude
       );
-      travelTime = Math.max(10, Math.round(estimatedTravelTime(dist, travelMode)));
+      travelTime = Math.max(5, Math.round(estimatedTravelTime(dist, travelMode)));
     }
 
     clock += dur + travelTime;
@@ -175,15 +196,11 @@ function buildDaySchedule(spots, foods, dayIndex, totalDays, travelMode) {
     const lunchTime = Math.max(clock, 12 * 60);
     const food = mealFoods[mealIdx];
     schedule.push({
-      time: formatTime(lunchTime),
-      type: "meal",
-      mealType: "점심",
-      name: food.name,
-      emoji: food.emoji,
-      description: food.description,
+      time: formatTime(lunchTime), type: "meal", mealType: "점심",
+      name: food.name, emoji: food.emoji, description: food.description,
       restaurants: food.restaurants,
     });
-    clock = lunchTime + 60 + 15;
+    clock = lunchTime + 60 + 10;
     mealIdx++;
   }
 
@@ -193,179 +210,151 @@ function buildDaySchedule(spots, foods, dayIndex, totalDays, travelMode) {
     const dur = parseDurationMin(spot.duration);
     schedule.push({ time: formatTime(clock), type: "spot", ...spot });
 
-    let travelTime = 15;
-    if (spotIdx + 1 < orderedSpots.length && spot.latitude && orderedSpots[spotIdx + 1].latitude) {
+    let travelTime = 10;
+    if (spotIdx + 1 < orderedSpots.length) {
       const dist = haversineDistance(
         spot.latitude, spot.longitude,
         orderedSpots[spotIdx + 1].latitude, orderedSpots[spotIdx + 1].longitude
       );
-      travelTime = Math.max(10, Math.round(estimatedTravelTime(dist, travelMode)));
+      travelTime = Math.max(5, Math.round(estimatedTravelTime(dist, travelMode)));
     }
 
     clock += dur + travelTime;
     spotIdx++;
   }
 
-  // === 카페 타임 (오후) ===
+  // === 카페 ===
   if (cafeFoods.length > 0 && clock < 17 * 60 + 30) {
     const cafeTime = Math.max(clock, 15 * 60);
     const cafe = cafeFoods[0];
     schedule.push({
-      time: formatTime(cafeTime),
-      type: "meal",
-      mealType: "카페",
-      name: cafe.name,
-      emoji: cafe.emoji,
-      description: cafe.description,
+      time: formatTime(cafeTime), type: "meal", mealType: "카페",
+      name: cafe.name, emoji: cafe.emoji, description: cafe.description,
       restaurants: cafe.restaurants,
     });
     clock = cafeTime + 40 + 10;
   }
 
   // === 저녁 ===
-  if (mealIdx < mealFoods.length && (totalDays > 1 || dayIndex === 0)) {
+  if (mealIdx < mealFoods.length) {
     const dinnerTime = Math.max(clock, 18 * 60);
     const food = mealFoods[mealIdx];
     schedule.push({
-      time: formatTime(dinnerTime),
-      type: "meal",
-      mealType: "저녁",
-      name: food.name,
-      emoji: food.emoji,
-      description: food.description,
+      time: formatTime(dinnerTime), type: "meal", mealType: "저녁",
+      name: food.name, emoji: food.emoji, description: food.description,
       restaurants: food.restaurants,
     });
     mealIdx++;
   }
 
   // === 남은 관광지 ===
-  while (spotIdx < orderedSpots.length) {
-    if (clock > 19 * 60) break;
+  while (spotIdx < orderedSpots.length && clock < 19 * 60) {
     const spot = orderedSpots[spotIdx];
     const dur = parseDurationMin(spot.duration);
     schedule.push({ time: formatTime(clock), type: "spot", ...spot });
-    clock += dur + 15;
+    clock += dur + 10;
     spotIdx++;
   }
 
   return schedule;
 }
 
-// ─── 숙소 필터 ───
-function parsePriceMin(priceRange) {
-  if (!priceRange) return 0;
-  const manMatch = priceRange.match(/(\d+)\s*만/);
-  if (manMatch) return parseInt(manMatch[1]) * 10000;
-  const match = priceRange.replace(/,/g, "").match(/(\d+)/);
-  return match ? parseInt(match[1]) : 0;
-}
+// ─── 대안 스팟 생성 (교체용) ───
+function buildAlternatives(selectedSpots, allZoneSpots, travelMode) {
+  const alternatives = {};
+  const selectedNames = new Set(selectedSpots.map((s) => s.name + s.region));
 
-function filterAccommodations(accommodations, selectedTypes, selectedPriceRange) {
-  let filtered = accommodations;
+  for (const spot of selectedSpots) {
+    const alts = allZoneSpots
+      .filter((s) => !selectedNames.has(s.name + s.region))
+      .map((s) => {
+        const dist = haversineDistance(
+          spot.latitude, spot.longitude, s.latitude, s.longitude
+        );
+        const time = Math.round(estimatedTravelTime(dist, travelMode));
+        return { ...s, travelTimeFromCurrent: time };
+      })
+      .filter((s) => s.travelTimeFromCurrent <= 25)
+      .sort((a, b) => b.vibeScore - a.vibeScore || a.travelTimeFromCurrent - b.travelTimeFromCurrent)
+      .slice(0, 3);
 
-  if (selectedTypes && selectedTypes.length > 0) {
-    filtered = filtered.filter((a) => selectedTypes.includes(a.type));
-  }
-
-  if (selectedPriceRange && selectedPriceRange !== "상관없음") {
-    const priceFiltered = filtered.filter((a) => {
-      const min = parsePriceMin(a.priceRange);
-      if (selectedPriceRange === "가성비") return min <= 70000;
-      if (selectedPriceRange === "중간") return min > 70000 && min <= 150000;
-      if (selectedPriceRange === "프리미엄") return min > 150000;
-      return true;
-    });
-    if (priceFiltered.length > 0) filtered = priceFiltered;
-  }
-
-  return filtered;
-}
-
-// ============================================================
-// 메인: 사용자 선택 기반 루트 최적화
-// ============================================================
-export function optimizeRoute({
-  selectedSpots,
-  selectedFoods,
-  duration,
-  travelMode,
-  selectedRegions,
-  selectedAccomTypes,
-  selectedPriceRange,
-}) {
-  const days = getDayCount(duration);
-
-  const allSpots = [...selectedSpots];
-  const allFoods = [...selectedFoods];
-
-  let dayGroups;
-
-  if (days === 1) {
-    dayGroups = [{ spots: allSpots, foods: allFoods }];
-  } else {
-    if (allSpots.length >= days) {
-      const clusters = kMeansClusters(allSpots, days);
-      const sorted = sortClustersByLocation(clusters);
-
-      while (sorted.length < days) {
-        sorted.push([]);
-      }
-
-      // 음식은 지역(region) 기준으로 Day에 배분
-      const foodsByDay = Array.from({ length: days }, () => []);
-      for (const food of allFoods) {
-        // 음식의 region과 같은 region의 spot이 있는 Day에 배치
-        let bestDay = 0;
-        for (let d = 0; d < sorted.length; d++) {
-          if (sorted[d].some((s) => s.region === food.region)) {
-            bestDay = d;
-            break;
-          }
-        }
-        foodsByDay[bestDay].push(food);
-      }
-
-      dayGroups = sorted.map((spots, i) => ({
-        spots,
-        foods: foodsByDay[i] || [],
-      }));
-    } else {
-      dayGroups = Array.from({ length: days }, (_, i) => ({
-        spots: i < allSpots.length ? [allSpots[i]] : [],
-        foods: i === 0 ? allFoods : [],
-      }));
+    if (alts.length > 0) {
+      alternatives[spot.name] = alts;
     }
   }
 
-  // 각 Day별 일정 생성
+  return alternatives;
+}
+
+// ─── 음식 자동 배정 ───
+function autoAssignFoods(daySpots) {
+  const regions = [...new Set(daySpots.map((s) => s.region))];
+  const foods = [];
+
+  for (const region of regions) {
+    const regionFoods = REGIONAL_FOODS[region] || [];
+    regionFoods.forEach((f) => foods.push({ ...f, region }));
+  }
+
+  // 중복 제거 후 식사 2개 + 카페 1개 한도
+  const meals = foods.filter((f) => f.category === "식사").slice(0, 2);
+  const cafes = foods.filter((f) => f.category === "간식/카페").slice(0, 1);
+  return [...meals, ...cafes];
+}
+
+// ============================================================
+// 메인: 자동 루트 생성
+// ============================================================
+export function generateRoute({ selectedZone, selectedVibes, duration, travelMode }) {
+  const days = getDayCount(duration);
+
+  // 1. Zone 내 스팟 수집
+  const allZoneSpots = getSpotsByZone(selectedZone);
+
+  // 2. Vibe 점수 매기기
+  const scored = scoreByVibes(allZoneSpots, selectedVibes);
+
+  // 3. 20분 클러스터 생성
+  const clusters = buildTimeLimitedClusters(scored, travelMode, 20);
+
+  // 4. Day별 배정
+  const spotsPerDay = days === 1 ? 5 : 4;
+  const dayGroups = assignClustersToDay(clusters, days, spotsPerDay);
+
+  // 5. 각 Day별 일정 생성
   const itinerary = [];
+  const allSelectedSpots = [];
 
   for (let day = 0; day < days; day++) {
-    const group = dayGroups[day] || { spots: [], foods: [] };
-    const schedule = buildDaySchedule(group.spots, group.foods, day, days, travelMode);
+    const group = dayGroups[day] || { spots: [] };
+    const daySpots = group.spots;
+    allSelectedSpots.push(...daySpots);
 
-    // 숙소 선택 (마지막 날 제외)
+    // 음식 자동 배정
+    const dayFoods = autoAssignFoods(daySpots);
+
+    // 스케줄 빌드
+    const schedule = buildDaySchedule(daySpots, dayFoods, travelMode);
+
+    // 숙소 (마지막 날 제외)
     let accommodationOptions = [];
     if (days > 1 && day < days - 1) {
-      const dayRegions = [...new Set(group.spots.map((s) => s.region))];
-      if (dayRegions.length === 0) dayRegions.push(...selectedRegions);
+      const dayRegions = [...new Set(daySpots.map((s) => s.region))];
+      if (dayRegions.length === 0) dayRegions.push(...selectedZone.regions);
 
       const dayAccom = [];
       dayRegions.forEach((regionName) => {
         const regionAccom = ALL_ACCOMMODATIONS[regionName] || [];
         regionAccom.forEach((a) => dayAccom.push({ ...a, region: regionName }));
       });
-
-      const filtered = filterAccommodations(dayAccom, selectedAccomTypes, selectedPriceRange);
-      accommodationOptions = (filtered.length > 0 ? filtered : dayAccom).slice(0, 3);
+      accommodationOptions = dayAccom.slice(0, 3);
     }
 
     // Day 제목
-    const dayRegions = [...new Set([
-      ...group.spots.map((s) => s.region),
-      ...group.foods.map((f) => f.region),
-    ])].filter(Boolean);
-    const regionLabel = dayRegions.length > 0 ? dayRegions.join(" · ") : selectedRegions.join(" · ");
+    const dayRegions = [...new Set(daySpots.map((s) => s.region))].filter(Boolean);
+    const regionLabel = dayRegions.length > 0
+      ? dayRegions.join(" · ")
+      : selectedZone.regions.slice(0, 2).join(" · ");
     const dayTitle = days === 1
       ? `당일 여행 — ${regionLabel}`
       : `${day + 1}일차 — ${regionLabel}`;
@@ -379,8 +368,12 @@ export function optimizeRoute({
     });
   }
 
-  // 교통 정보
-  const transportInfo = selectedRegions.map((regionName) => {
+  // 6. 대안 스팟 (교체용)
+  const alternatives = buildAlternatives(allSelectedSpots, scored, travelMode);
+
+  // 7. 교통 정보
+  const transportRegions = [...new Set(allSelectedSpots.map((s) => s.region))];
+  const transportInfo = transportRegions.map((regionName) => {
     const region = REGIONS[regionName];
     if (!region) return { region: regionName, info: {} };
     return {
@@ -391,5 +384,5 @@ export function optimizeRoute({
     };
   });
 
-  return { itinerary, transportInfo };
+  return { itinerary, transportInfo, alternatives, zone: selectedZone, vibes: selectedVibes };
 }

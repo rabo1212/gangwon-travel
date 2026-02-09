@@ -2,17 +2,14 @@ import { useState, useMemo, useCallback } from "react";
 
 export function useWizard() {
   const [step, setStep] = useState(0);
-  const [selectedRegions, setSelectedRegions] = useState([]);
-  const [selectedSpots, setSelectedSpots] = useState([]);
-  const [selectedFoods, setSelectedFoods] = useState([]);
+  const [selectedZone, setSelectedZone] = useState(null);
+  const [selectedVibes, setSelectedVibes] = useState([]);
   const [travelMode, setTravelMode] = useState(null);
   const [duration, setDuration] = useState(null);
-  const [selectedAccomTypes, setSelectedAccomTypes] = useState([]);
-  const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // 0:Welcome 1:Region 2:SpotPicker 3:FoodPicker 4:TripSettings 5:Result
-  const TOTAL_STEPS = 6;
+  // 0:Welcome 1:ZoneVibe 2:TripSettings 3:Result
+  const TOTAL_STEPS = 4;
 
   const animateStep = useCallback((newStep) => {
     setIsTransitioning(true);
@@ -36,76 +33,52 @@ export function useWizard() {
     setIsTransitioning(true);
     setTimeout(() => {
       setStep(0);
-      setSelectedRegions([]);
-      setSelectedSpots([]);
-      setSelectedFoods([]);
+      setSelectedZone(null);
+      setSelectedVibes([]);
       setTravelMode(null);
       setDuration(null);
-      setSelectedAccomTypes([]);
-      setSelectedPriceRange(null);
       setIsTransitioning(false);
     }, 300);
   }, []);
 
-  const toggleRegion = useCallback((region) => {
-    setSelectedRegions((prev) => {
-      if (prev.includes(region)) return prev.filter((r) => r !== region);
+  const selectZone = useCallback((zone) => {
+    setSelectedZone((prev) => (prev?.id === zone.id ? null : zone));
+  }, []);
+
+  const toggleVibe = useCallback((vibeId) => {
+    setSelectedVibes((prev) => {
+      if (prev.includes(vibeId)) return prev.filter((v) => v !== vibeId);
       if (prev.length >= 3) return prev;
-      return [...prev, region];
+      return [...prev, vibeId];
     });
-    // 지역 변경 시 해당 지역 장소 선택 초기화
-    setSelectedSpots((prev) => {
-      const newRegions = selectedRegions.includes(region)
-        ? selectedRegions.filter((r) => r !== region)
-        : [...selectedRegions, region];
-      return prev.filter((s) => newRegions.includes(s.region));
-    });
-    setSelectedFoods((prev) => {
-      const newRegions = selectedRegions.includes(region)
-        ? selectedRegions.filter((r) => r !== region)
-        : [...selectedRegions, region];
-      return prev.filter((f) => newRegions.includes(f.region));
-    });
-  }, [selectedRegions]);
-
-  const toggleSpot = useCallback((spot) => {
-    setSelectedSpots((prev) => {
-      const exists = prev.some((s) => s.name === spot.name && s.region === spot.region);
-      if (exists) return prev.filter((s) => !(s.name === spot.name && s.region === spot.region));
-      return [...prev, spot];
-    });
-  }, []);
-
-  const toggleFood = useCallback((food) => {
-    setSelectedFoods((prev) => {
-      const exists = prev.some((f) => f.id === food.id);
-      if (exists) return prev.filter((f) => f.id !== food.id);
-      return [...prev, food];
-    });
-  }, []);
-
-  const toggleAccomType = useCallback((typeId) => {
-    setSelectedAccomTypes((prev) =>
-      prev.includes(typeId) ? prev.filter((t) => t !== typeId) : [...prev, typeId]
-    );
   }, []);
 
   const canProceed = useMemo(() => {
     switch (step) {
-      case 1: return selectedRegions.length > 0;
-      case 2: return selectedSpots.length >= 2;
-      case 3: return selectedFoods.length >= 1;
-      case 4: return duration !== null && travelMode !== null;
-      default: return true;
+      case 1:
+        return selectedZone !== null && selectedVibes.length >= 1;
+      case 2:
+        return duration !== null && travelMode !== null;
+      default:
+        return true;
     }
-  }, [step, selectedRegions, selectedSpots, selectedFoods, duration, travelMode]);
+  }, [step, selectedZone, selectedVibes, duration, travelMode]);
 
   return {
-    step, selectedRegions, selectedSpots, selectedFoods,
-    travelMode, duration, selectedAccomTypes, selectedPriceRange,
-    isTransitioning, TOTAL_STEPS, canProceed,
-    setTravelMode, setDuration, setSelectedPriceRange,
-    nextStep, prevStep, resetAll,
-    toggleRegion, toggleSpot, toggleFood, toggleAccomType,
+    step,
+    selectedZone,
+    selectedVibes,
+    travelMode,
+    duration,
+    isTransitioning,
+    TOTAL_STEPS,
+    canProceed,
+    setTravelMode,
+    setDuration,
+    nextStep,
+    prevStep,
+    resetAll,
+    selectZone,
+    toggleVibe,
   };
 }
