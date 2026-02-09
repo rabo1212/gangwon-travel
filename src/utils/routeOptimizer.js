@@ -229,11 +229,14 @@ function buildDaySchedule(spots, foods, travelMode) {
   if (mealIdx < allMeals.length) {
     const lunchTime = Math.max(clock, 12 * 60);
     const food = allMeals[mealIdx];
+    // 음식 좌표: 데이터에 있으면 사용, 없으면 직전 스팟 좌표 차용
+    const lastLunchCoords = [...schedule].reverse().find((s) => s.latitude && s.longitude);
     schedule.push({
       time: formatTime(lunchTime), type: "meal", mealType: "점심",
       name: food.name, emoji: food.emoji, description: food.description,
       restaurants: food.restaurants,
-      latitude: food.latitude, longitude: food.longitude,
+      latitude: food.latitude || lastLunchCoords?.latitude,
+      longitude: food.longitude || lastLunchCoords?.longitude,
     });
     clock = lunchTime + 60 + 10;
     mealIdx++;
@@ -262,10 +265,14 @@ function buildDaySchedule(spots, foods, travelMode) {
   if (cafeFoods.length > 0 && clock < 17 * 60 + 30) {
     const cafeTime = Math.max(clock, 15 * 60);
     const cafe = cafeFoods[0];
+    // 카페 좌표: 데이터에 있으면 사용, 없으면 직전 스팟 좌표 차용
+    const lastWithCoords = [...schedule].reverse().find((s) => s.latitude && s.longitude);
     schedule.push({
       time: formatTime(cafeTime), type: "meal", mealType: "카페",
       name: cafe.name, emoji: cafe.emoji, description: cafe.description,
       restaurants: cafe.restaurants,
+      latitude: cafe.latitude || lastWithCoords?.latitude,
+      longitude: cafe.longitude || lastWithCoords?.longitude,
     });
     clock = cafeTime + 40 + 10;
   }
@@ -274,11 +281,13 @@ function buildDaySchedule(spots, foods, travelMode) {
   if (mealIdx < allMeals.length) {
     const dinnerTime = Math.max(clock, 18 * 60);
     const food = allMeals[mealIdx];
+    const lastDinnerCoords = [...schedule].reverse().find((s) => s.latitude && s.longitude);
     schedule.push({
       time: formatTime(dinnerTime), type: "meal", mealType: "저녁",
       name: food.name, emoji: food.emoji, description: food.description,
       restaurants: food.restaurants,
-      latitude: food.latitude, longitude: food.longitude,
+      latitude: food.latitude || lastDinnerCoords?.latitude,
+      longitude: food.longitude || lastDinnerCoords?.longitude,
     });
     mealIdx++;
   }
