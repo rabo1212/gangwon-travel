@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Check, MapPin, Clock, Camera } from "lucide-react";
+import { Check, MapPin, Clock, Camera, Loader2 } from "lucide-react";
 import { ALL_SPOTS } from "../../data/spots";
+import { useSpots } from "../../hooks/useTourData";
 import StepHeader from "../ui/StepHeader";
 import ProgressBar from "../ui/ProgressBar";
 import BottomNav from "../ui/BottomNav";
@@ -18,17 +19,21 @@ export default function SpotPickerStep({ wizard }) {
   const { selectedRegions, selectedSpots, toggleSpot, prevStep, nextStep, canProceed, TOTAL_STEPS } = wizard;
   const [activeTab, setActiveTab] = useState(selectedRegions[0] || "");
 
+  // TourAPI 데이터 (비동기, 백그라운드 로드)
+  const { data: apiSpots, loading: spotsLoading } = useSpots(activeTab);
+
   // 현재 탭의 관광지를 카테고리별로 그룹화
   const spotsByCategory = useMemo(() => {
-    const spots = ALL_SPOTS[activeTab] || [];
+    // API 데이터가 있으면 사용, 없으면 정적 데이터 fallback
+    const spots = apiSpots || (ALL_SPOTS[activeTab] || []).map(s => ({ ...s, source: "static" }));
     const grouped = {};
     spots.forEach((spot) => {
       const cat = spot.category || "기타";
       if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push({ ...spot, region: activeTab });
+      grouped[cat].push({ ...spot, region: spot.region || activeTab });
     });
     return grouped;
-  }, [activeTab]);
+  }, [activeTab, apiSpots]);
 
   const isSpotSelected = (spot) =>
     selectedSpots.some((s) => s.name === spot.name && s.region === (spot.region || activeTab));
@@ -90,6 +95,12 @@ export default function SpotPickerStep({ wizard }) {
 
       {/* 카테고리별 관광지 목록 */}
       <div className="flex-1 overflow-y-auto px-4 pb-32 mt-3">
+        {spotsLoading && (
+          <div className="flex items-center justify-center gap-2 py-2 text-xs text-blue-500">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>추가 관광지 불러오는 중...</span>
+          </div>
+        )}
         <div className="max-w-lg mx-auto space-y-6">
           {Object.entries(spotsByCategory).map(([category, spots]) => (
             <div key={category}>

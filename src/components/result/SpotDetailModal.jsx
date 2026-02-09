@@ -1,14 +1,40 @@
-import { X, MapPin, Clock, ExternalLink, ArrowRightLeft, Lightbulb, Navigation } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, MapPin, Clock, ExternalLink, ArrowRightLeft, Lightbulb, Navigation, Loader2 } from "lucide-react";
 import { getSpotImageUrl } from "../../utils/spotImages";
+import { fetchDetail } from "../../services/tourApiService";
 
 export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives, onSwapRequest }) {
+  const [detail, setDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  // TourAPI contentId가 있으면 상세정보 추가 로드
+  useEffect(() => {
+    if (!spot?.contentId) return;
+    setDetailLoading(true);
+    fetchDetail(spot.contentId, spot.contentTypeId)
+      .then((data) => {
+        if (data.success) setDetail(data);
+      })
+      .catch(() => {})
+      .finally(() => setDetailLoading(false));
+  }, [spot?.contentId]);
+
   if (!spot) return null;
 
+  // TourAPI 이미지가 있으면 우선 사용
+  const mainImage = spot.imageUrl || getSpotImageUrl(spot, 600, 300);
   const images = [
-    getSpotImageUrl(spot, 600, 300),
-    getSpotImageUrl({ ...spot, name: spot.name + "_2" }, 300, 200),
+    mainImage,
+    spot.imageUrl2 || getSpotImageUrl({ ...spot, name: spot.name + "_2" }, 300, 200),
     getSpotImageUrl({ ...spot, name: spot.name + "_3" }, 300, 200),
   ];
+
+  // 상세정보에서 운영시간 보강
+  const hours = detail?.intro?.usetime || detail?.intro?.usetimeculture || spot.hours;
+  // 상세정보에서 설명 보강
+  const overview = detail?.common?.overview
+    ? detail.common.overview.replace(/<[^>]*>/g, "").trim()
+    : spot.description;
 
   const naverMapUrl = `https://map.naver.com/v5/search/${encodeURIComponent(spot.name + " " + (spot.region || "강원"))}`;
   const kakaoMapUrl = `https://map.kakao.com/link/search/${encodeURIComponent(spot.name)}`;
@@ -82,8 +108,15 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
           )}
 
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
-            {spot.description}
+            {overview}
           </p>
+
+          {detailLoading && (
+            <div className="flex items-center gap-1.5 text-xs text-blue-400 mb-3">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              상세정보 불러오는 중...
+            </div>
+          )}
 
           {/* 상세 정보 */}
           <div className="space-y-2.5 mb-4">
@@ -93,10 +126,10 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
                 <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{spot.address}</span>
               </div>
             )}
-            {spot.hours && (
+            {hours && (
               <div className="flex items-start gap-2">
                 <Clock className="w-4 h-4 mt-0.5 shrink-0 text-blue-500" />
-                <span className="text-sm text-blue-500">{spot.hours}</span>
+                <span className="text-sm text-blue-500">{hours}</span>
               </div>
             )}
             {spot.duration && (
