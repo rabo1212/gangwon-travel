@@ -4,7 +4,7 @@ import { TRAVEL_STYLES } from "../../data/constants";
 import html2canvas from "html2canvas";
 
 function buildItineraryText(route, zone, vibes, duration, travelMode) {
-  let text = `⛏️ DB-DEEP 강원 | 데이터 영수증\n`;
+  let text = `DB-DEEP 강원 | 데이터 영수증\n`;
   text += `━━━━━━━━━━━━━━━━━━━━━━\n`;
   text += `🗺️ Zone: ${zone?.emoji} ${zone?.name} (${zone?.nameKo})\n`;
   text += `🎯 Vibe: ${vibes.map((v) => {
@@ -44,7 +44,7 @@ function buildItineraryText(route, zone, vibes, duration, travelMode) {
   return text;
 }
 
-// 데이터 영수증 스타일 이미지 카드
+// 데이터 영수증 스타일 이미지 카드 (항상 밝은 테마 - 이미지 내보내기용)
 function ReceiptCard({ route, zone, vibes, duration, travelMode }) {
   const totalSpots = route.itinerary.reduce(
     (sum, day) => sum + day.schedule.filter((s) => s.type === "spot").length,
@@ -273,12 +273,18 @@ export default function ShareSection({ route, zone, vibes, duration, travelMode 
 
   return (
     <div className="mt-8 mb-8">
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+      <div
+        className="rounded-2xl p-6 shadow-sm"
+        style={{
+          background: "var(--bg-card)",
+          border: "1px solid var(--border-color)",
+        }}
+      >
         <div className="flex items-center justify-center gap-2 mb-1">
           <Database className="w-4 h-4 text-[#00A86B]" />
-          <h3 className="text-lg font-bold text-[#1A1A2E]">데이터 영수증</h3>
+          <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>데이터 영수증</h3>
         </div>
-        <p className="text-sm text-gray-500 mb-5 text-center">나만의 여행 데이터를 저장하고 공유하세요</p>
+        <p className="text-sm mb-5 text-center" style={{ color: "var(--text-secondary)" }}>나만의 여행 데이터를 저장하고 공유하세요</p>
 
         {/* 영수증 카드 미리보기 */}
         <div className="flex justify-center mb-5 overflow-x-auto">
@@ -325,10 +331,9 @@ export default function ShareSection({ route, zone, vibes, duration, travelMode 
           <button
             onClick={handleCopy}
             className={`w-full flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 transform ${
-              copied
-                ? "bg-[#00A86B] text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              copied ? "bg-[#00A86B] text-white" : ""
             }`}
+            style={!copied ? { background: "var(--bg-input)", color: "var(--text-secondary)" } : undefined}
           >
             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             {copied ? "복사 완료!" : "텍스트로 복사"}

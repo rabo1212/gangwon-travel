@@ -29,6 +29,21 @@ export function useWizard() {
     if (step > 0) animateStep(step - 1);
   }, [step, isTransitioning, animateStep]);
 
+  const goToStep = useCallback((targetStep) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setStep(targetStep);
+      setIsTransitioning(false);
+    }, 300);
+  }, []);
+
+  const loadState = useCallback((zone, vibes, mode, dur) => {
+    setSelectedZone(zone);
+    setSelectedVibes(vibes || []);
+    setTravelMode(mode);
+    setDuration(dur);
+  }, []);
+
   const resetAll = useCallback(() => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -80,5 +95,7 @@ export function useWizard() {
     resetAll,
     selectZone,
     toggleVibe,
+    goToStep,
+    loadState,
   };
 }

@@ -1,7 +1,23 @@
-import { Database, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { Database, ChevronRight, ClipboardList, Trash2 } from "lucide-react";
 import MountainBackground from "../ui/MountainBackground";
+import { getSavedTrips, deleteTrip } from "../../utils/tripStorage";
 
-export default function WelcomeStep({ onNext }) {
+export default function WelcomeStep({ onNext, onLoadTrip }) {
+  const [showSaved, setShowSaved] = useState(false);
+  const [savedTrips, setSavedTrips] = useState([]);
+
+  const handleShowSaved = () => {
+    setSavedTrips(getSavedTrips());
+    setShowSaved(true);
+  };
+
+  const handleDelete = (e, tripId) => {
+    e.stopPropagation();
+    deleteTrip(tripId);
+    setSavedTrips(getSavedTrips());
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden bg-gradient-to-b from-[#0a0a1a] via-[#1A1A2E] to-[#0d2818]">
       <MountainBackground />
@@ -44,10 +60,81 @@ export default function WelcomeStep({ onNext }) {
           <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
         </button>
 
-        <p className="mt-10 text-xs text-white/20">
+        {/* 저장된 일정 버튼 */}
+        <button
+          onClick={handleShowSaved}
+          className="mt-4 flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 text-white/60 hover:text-white/80 rounded-xl text-sm font-medium transition-all active:scale-95"
+        >
+          <ClipboardList className="w-4 h-4" />
+          저장된 일정
+        </button>
+
+        <p className="mt-8 text-xs text-white/20">
           DEEP DIVE INTO GANGWON
         </p>
       </div>
+
+      {/* 저장된 일정 모달 */}
+      {showSaved && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center"
+          onClick={() => setShowSaved(false)}
+        >
+          <div
+            className="w-full max-w-lg bg-[#1A1A2E] rounded-t-3xl p-6 pb-10 max-h-[70vh] overflow-y-auto animate-slide-up"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <ClipboardList className="w-5 h-5 text-[#00A86B]" />
+              저장된 일정
+            </h3>
+
+            {savedTrips.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-white/30 text-sm">아직 저장된 일정이 없어요</p>
+                <p className="text-white/20 text-xs mt-1">여행을 만들고 저장해보세요!</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {savedTrips.map((trip) => (
+                  <div
+                    key={trip.id}
+                    onClick={() => {
+                      onLoadTrip(trip);
+                      setShowSaved(false);
+                    }}
+                    className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors cursor-pointer active:scale-[0.98]"
+                  >
+                    <div className="text-2xl">{trip.zone.emoji}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white font-bold text-sm truncate">
+                        {trip.zone.name}
+                      </div>
+                      <div className="text-white/40 text-xs mt-0.5">
+                        {trip.duration} · {trip.travelMode} · 스팟 {trip.spotCount || "?"}곳
+                      </div>
+                      <div className="text-white/25 text-[10px] mt-0.5">
+                        {new Date(trip.savedAt).toLocaleDateString("ko", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => handleDelete(e, trip.id)}
+                      className="p-2 text-red-400/60 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

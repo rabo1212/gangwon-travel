@@ -1,46 +1,68 @@
-import { useState } from "react";
-import { MapPin, ChevronLeft, RotateCcw, Database } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { ChevronLeft, RotateCcw, Database, Save } from "lucide-react";
+import { saveTrip } from "../../utils/tripStorage";
 import { TRAVEL_STYLES } from "../../data/constants";
 import ItineraryDay from "../result/ItineraryDay";
 import TransportInfo from "../result/TransportInfo";
+import BudgetSummary from "../result/BudgetSummary";
 import ShareSection from "../result/ShareSection";
 import SpotSwapModal from "../result/SpotSwapModal";
 import KakaoMap from "../map/KakaoMap";
 
-export default function ResultStep({ wizard, route }) {
+export default function ResultStep({ wizard, route, isDark }) {
   const { selectedZone, selectedVibes, travelMode, duration, prevStep, resetAll } = wizard;
   const [mapExpanded, setMapExpanded] = useState(false);
 
   // 스팟 교체 상태
   const [modifiedRoute, setModifiedRoute] = useState(null);
-  const [swapModal, setSwapModal] = useState(null); // { dayIndex, scheduleIndex, spot }
+  const [swapModal, setSwapModal] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleScroll = () => setScrolled(el.scrollTop > 40);
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleSave = () => {
+    const result = saveTrip({
+      zone: selectedZone,
+      vibes: selectedVibes,
+      duration,
+      travelMode,
+      route: displayRoute,
+    });
+    if (result.success) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+  };
 
   const displayRoute = modifiedRoute || route;
 
   if (!displayRoute) return null;
 
-  // 스팟 교체 요청
   const handleSwapRequest = (dayIndex, scheduleIndex, spot) => {
     setSwapModal({ dayIndex, scheduleIndex, spot });
   };
 
-  // 스팟 교체 실행
   const handleSwap = (newSpot) => {
     const newRoute = JSON.parse(JSON.stringify(displayRoute));
     const { dayIndex, scheduleIndex, spot: oldSpot } = swapModal;
 
-    // 스케줄에서 교체
     newRoute.itinerary[dayIndex].schedule[scheduleIndex] = {
       ...newSpot,
       time: newRoute.itinerary[dayIndex].schedule[scheduleIndex].time,
       type: "spot",
     };
 
-    // 대안 목록 업데이트: 새 스팟 제거, 기존 스팟 추가
     const oldAlts = (newRoute.alternatives[oldSpot.name] || []).filter(
       (a) => a.name !== newSpot.name
     );
-    // 기존 스팟을 새 스팟의 대안으로
     oldAlts.push({
       ...oldSpot,
       travelTimeFromCurrent: newSpot.travelTimeFromCurrent || 10,
@@ -52,109 +74,167 @@ export default function ResultStep({ wizard, route }) {
     setSwapModal(null);
   };
 
-  // 총 스팟 수 계산
   const totalSpots = displayRoute.itinerary.reduce(
     (sum, day) => sum + day.schedule.filter((s) => s.type === "spot").length,
     0
   );
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F5F7FA]">
-      {/* DB-DEEP 헤더 */}
-      <div className="bg-gradient-to-br from-[#1A1A2E] via-[#16213E] to-[#0d2818] text-white px-6 py-8 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-primary)" }}>
+      {/* 스티키 헤더 */}
+      <div
+        className={`sticky top-0 z-40 text-white relative overflow-hidden transition-all duration-300 ${
+          scrolled ? "shadow-xl" : ""
+        }`}
+        style={{
+          background: "linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0d2818 100%)",
+          backdropFilter: scrolled ? "blur(12px)" : undefined,
+        }}
+      >
         <div className="absolute top-0 right-0 w-40 h-40 bg-[#00A86B]/10 rounded-full -translate-y-1/2 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#0066CC]/10 rounded-full translate-y-1/2 -translate-x-1/4" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 text-sm opacity-60 mb-3">
-            <Database className="w-4 h-4" />
-            <span>DB-DEEP 강원</span>
-          </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-2">나의 강원 데이터</h1>
-
-          {/* Zone + Vibe 뱃지 */}
-          <div className="flex flex-wrap gap-2 mt-3">
-            <span className="px-3 py-1 bg-[#00A86B]/20 border border-[#00A86B]/30 rounded-full text-sm font-medium">
-              {selectedZone?.emoji} {selectedZone?.name}
-            </span>
-            {selectedVibes.map((v) => {
-              const style = TRAVEL_STYLES.find((s) => s.id === v);
-              return (
-                <span key={v} className="px-2 py-1 bg-white/10 rounded-full text-xs">
-                  {style?.emoji} {style?.label}
+        <div
+          className={`relative z-10 px-5 sm:px-6 transition-all duration-300 ${
+            scrolled ? "py-3" : "py-6 sm:py-8"
+          }`}
+        >
+          {/* 컴팩트 모드: 한 줄 요약 */}
+          {scrolled ? (
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 text-xs opacity-50">
+                <Database className="w-3.5 h-3.5" />
+              </div>
+              <h1 className="text-base font-extrabold flex-1 truncate">
+                {selectedZone?.emoji} {selectedZone?.name}
+              </h1>
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-0.5 bg-white/10 rounded-full text-[10px]">
+                  📅 {duration}
                 </span>
-              );
-            })}
-          </div>
-          <div className="flex flex-wrap gap-2 mt-2">
-            <span className="px-3 py-1 bg-white/10 rounded-full text-xs">
-              {travelMode === "자차" ? "🚗" : "🚌"} {travelMode}
-            </span>
-            <span className="px-3 py-1 bg-white/10 rounded-full text-xs">📅 {duration}</span>
-            <span className="px-3 py-1 bg-white/10 rounded-full text-xs">
-              📍 스팟 {totalSpots}곳
-            </span>
-          </div>
+                <span className="px-2 py-0.5 bg-white/10 rounded-full text-[10px]">
+                  📍 {totalSpots}곳
+                </span>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 text-sm opacity-60 mb-2 sm:mb-3">
+                <Database className="w-4 h-4" />
+                <span>DB-DEEP 강원</span>
+              </div>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-2">나의 강원 데이터</h1>
+
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3">
+                <span className="px-2.5 sm:px-3 py-1 bg-[#00A86B]/20 border border-[#00A86B]/30 rounded-full text-xs sm:text-sm font-medium">
+                  {selectedZone?.emoji} {selectedZone?.name}
+                </span>
+                {selectedVibes.map((v) => {
+                  const style = TRAVEL_STYLES.find((s) => s.id === v);
+                  return (
+                    <span key={v} className="px-2 py-1 bg-white/10 rounded-full text-[10px] sm:text-xs">
+                      {style?.emoji} {style?.label}
+                    </span>
+                  );
+                })}
+              </div>
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
+                <span className="px-2.5 sm:px-3 py-1 bg-white/10 rounded-full text-[10px] sm:text-xs">
+                  {travelMode === "자차" ? "🚗" : "🚌"} {travelMode}
+                </span>
+                <span className="px-2.5 sm:px-3 py-1 bg-white/10 rounded-full text-[10px] sm:text-xs">📅 {duration}</span>
+                <span className="px-2.5 sm:px-3 py-1 bg-white/10 rounded-full text-[10px] sm:text-xs">
+                  📍 스팟 {totalSpots}곳
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* 카카오맵 */}
-      <div className="mx-4 mt-4 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-        <KakaoMap
-          itinerary={displayRoute.itinerary}
-          expanded={mapExpanded}
-          onToggleExpand={() => setMapExpanded((v) => !v)}
-        />
-      </div>
-
-      {/* 본문 */}
-      <div className="flex-1 overflow-y-auto px-4 pb-40">
-        {/* 일정표 */}
-        {displayRoute.itinerary.map((day, dayIdx) => (
-          <ItineraryDay
-            key={dayIdx}
-            day={day}
-            dayIndex={dayIdx}
-            alternatives={displayRoute.alternatives}
-            onSwapRequest={handleSwapRequest}
+      {/* 스크롤 가능 본문 */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        {/* 카카오맵 */}
+        <div
+          className="mx-3 sm:mx-4 mt-3 sm:mt-4 rounded-2xl overflow-hidden shadow-sm"
+          style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)" }}
+        >
+          <KakaoMap
+            itinerary={displayRoute.itinerary}
+            expanded={mapExpanded}
+            onToggleExpand={() => setMapExpanded((v) => !v)}
           />
-        ))}
+        </div>
 
-        {/* 교통 정보 */}
-        <TransportInfo transportInfo={displayRoute.transportInfo} travelMode={travelMode} />
+        {/* 일정 */}
+        <div className="px-3 sm:px-4 pb-36 sm:pb-40">
+          {displayRoute.itinerary.map((day, dayIdx) => (
+            <ItineraryDay
+              key={dayIdx}
+              day={day}
+              dayIndex={dayIdx}
+              alternatives={displayRoute.alternatives}
+              onSwapRequest={handleSwapRequest}
+              travelMode={travelMode}
+              isDark={isDark}
+            />
+          ))}
 
-        {/* 공유 (데이터 영수증) */}
-        <ShareSection
-          route={displayRoute}
-          zone={selectedZone}
-          vibes={selectedVibes}
-          duration={duration}
-          travelMode={travelMode}
-        />
+          <TransportInfo transportInfo={displayRoute.transportInfo} travelMode={travelMode} isDark={isDark} />
+          <BudgetSummary itinerary={displayRoute.itinerary} isDark={isDark} />
+
+          <ShareSection
+            route={displayRoute}
+            zone={selectedZone}
+            vibes={selectedVibes}
+            duration={duration}
+            travelMode={travelMode}
+          />
+        </div>
       </div>
 
       {/* 하단 버튼 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-6 py-4 flex gap-3 z-50">
+      <div
+        className="fixed bottom-0 left-0 right-0 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 flex gap-2 sm:gap-3 z-50"
+        style={{
+          background: "color-mix(in srgb, var(--bg-secondary) 95%, transparent)",
+          borderTop: "1px solid var(--border-color)",
+        }}
+      >
         <button
           onClick={resetAll}
-          className="flex items-center justify-center gap-1.5 py-4 px-5 bg-gray-100 text-gray-700 rounded-2xl font-bold text-sm hover:bg-gray-200 transition-colors active:scale-95 transform"
+          className="flex items-center justify-center gap-1.5 min-h-[48px] px-4 rounded-2xl font-bold text-sm transition-colors active:scale-95 transform"
+          style={{ background: "var(--bg-input)", color: "var(--text-secondary)" }}
         >
-          <RotateCcw className="w-4 h-4" /> 처음부터
+          <RotateCcw className="w-4 h-4" />
+        </button>
+        <button
+          onClick={handleSave}
+          className={`flex items-center justify-center gap-1.5 min-h-[48px] px-4 sm:px-5 rounded-2xl font-bold text-sm transition-all active:scale-95 transform ${
+            saved
+              ? "bg-[#00A86B] text-white"
+              : "border-2 border-[#0066CC] text-[#0066CC]"
+          }`}
+          style={!saved ? { background: isDark ? "rgba(0,102,204,0.1)" : "#EBF5FF" } : undefined}
+        >
+          <Save className="w-4 h-4" />
+          {saved ? "저장됨!" : "저장"}
         </button>
         <button
           onClick={prevStep}
-          className="flex-1 flex items-center justify-center gap-2 py-4 border-2 border-[#0066CC] text-[#0066CC] rounded-2xl font-bold text-base hover:bg-blue-50 transition-colors active:scale-95 transform"
+          className="flex-1 flex items-center justify-center gap-2 min-h-[48px] border-2 border-[#0066CC] text-[#0066CC] rounded-2xl font-bold text-sm sm:text-base transition-colors active:scale-95 transform"
+          style={{ background: isDark ? "rgba(0,102,204,0.1)" : "#EBF5FF" }}
         >
           <ChevronLeft className="w-5 h-5" /> 설정 변경
         </button>
       </div>
 
-      {/* 스팟 교체 모달 */}
       {swapModal && (
         <SpotSwapModal
           currentSpot={swapModal.spot}
           alternatives={displayRoute.alternatives[swapModal.spot.name] || []}
           onSwap={handleSwap}
           onClose={() => setSwapModal(null)}
+          isDark={isDark}
         />
       )}
     </div>

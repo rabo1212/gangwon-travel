@@ -1,8 +1,41 @@
 @import "tailwindcss";
 
+/* 다크모드 기본 */
+:root {
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #1e1e35;
+  --bg-card-hover: #25253f;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  color-scheme: dark;
+}
+
+/* 라이트모드 */
+[data-theme="light"] {
+  --bg-primary: #F5F7FA;
+  --bg-secondary: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F0F2F5;
+  --text-primary: #1A1A2E;
+  --text-secondary: #4A4A6A;
+  --text-muted: #9CA3AF;
+  --border-color: #E5E7EB;
+  --bg-input: #F3F4F6;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  color-scheme: light;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @keyframes slide-up {
