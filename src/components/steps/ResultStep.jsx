@@ -6,7 +6,7 @@ import ShareSection from "../result/ShareSection";
 import KakaoMap from "../map/KakaoMap";
 
 export default function ResultStep({ wizard, route }) {
-  const { selectedRegions, selectedSpots, selectedRestaurants, travelMode, duration, prevStep, resetAll } = wizard;
+  const { selectedRegions, selectedSpots, selectedFoods, travelMode, duration, prevStep, resetAll } = wizard;
   const [mapExpanded, setMapExpanded] = useState(false);
 
   if (!route) return null;
@@ -32,7 +32,7 @@ export default function ResultStep({ wizard, route }) {
               📍 관광지 {selectedSpots.length}곳
             </span>
             <span className="px-3 py-1 bg-white/20 rounded-full text-sm">
-              🍽️ 맛집 {selectedRestaurants.length}곳
+              🍽️ 음식 {selectedFoods.length}개
             </span>
           </div>
         </div>

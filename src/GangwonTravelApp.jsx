@@ -27,7 +27,7 @@ export default function GangwonTravelApp() {
     if (wizard.step < 5) return null;
     return optimizeRoute({
       selectedSpots: wizard.selectedSpots,
-      selectedRestaurants: wizard.selectedRestaurants,
+      selectedFoods: wizard.selectedFoods,
       duration: wizard.duration,
       travelMode: wizard.travelMode,
       selectedRegions: wizard.selectedRegions,
@@ -37,7 +37,7 @@ export default function GangwonTravelApp() {
   }, [
     wizard.step,
     wizard.selectedSpots,
-    wizard.selectedRestaurants,
+    wizard.selectedFoods,
     wizard.duration,
     wizard.travelMode,
     wizard.selectedRegions,

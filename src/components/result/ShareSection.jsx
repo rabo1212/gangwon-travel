@@ -12,8 +12,13 @@ function buildItineraryText(route, selectedRegions, duration, travelMode) {
       if (item.type === "spot") {
         text += `  ${item.time} 🏔️ ${item.name}\n`;
       } else if (item.type === "meal") {
-        const icon = item.mealType === "점심" ? "🍽️" : "🍷";
-        text += `  ${item.time} ${icon} [${item.mealType}] ${item.name} - ${item.mainMenu}\n`;
+        const icon = item.mealType === "점심" ? "🍽️" : item.mealType === "카페" ? "☕" : "🍷";
+        text += `  ${item.time} ${icon} [${item.mealType}] ${item.name}\n`;
+        if (item.restaurants && item.restaurants.length > 0) {
+          item.restaurants.forEach((r) => {
+            text += `    → ${r.name} (${r.priceRange || ""})\n`;
+          });
+        }
       }
     });
     if (day.accommodationOptions && day.accommodationOptions.length > 0) {
@@ -81,7 +86,11 @@ function ItineraryCard({ route, selectedRegions, duration, travelMode }) {
                       {item.mealType}
                     </span>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{item.name}</div>
-                    <div style={{ fontSize: 11, color: "#888" }}>{item.mainMenu}</div>
+                    {item.restaurants && item.restaurants.length > 0 && (
+                      <div style={{ fontSize: 10, color: "#888", marginTop: 2 }}>
+                        추천: {item.restaurants.map((r) => r.name).join(", ")}
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div style={{ fontSize: 13, fontWeight: 600 }}>🏔️ {item.name}</div>

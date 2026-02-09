@@ -4,7 +4,7 @@ export function useWizard() {
   const [step, setStep] = useState(0);
   const [selectedRegions, setSelectedRegions] = useState([]);
   const [selectedSpots, setSelectedSpots] = useState([]);
-  const [selectedRestaurants, setSelectedRestaurants] = useState([]);
+  const [selectedFoods, setSelectedFoods] = useState([]);
   const [travelMode, setTravelMode] = useState(null);
   const [duration, setDuration] = useState(null);
   const [selectedAccomTypes, setSelectedAccomTypes] = useState([]);
@@ -38,7 +38,7 @@ export function useWizard() {
       setStep(0);
       setSelectedRegions([]);
       setSelectedSpots([]);
-      setSelectedRestaurants([]);
+      setSelectedFoods([]);
       setTravelMode(null);
       setDuration(null);
       setSelectedAccomTypes([]);
@@ -60,11 +60,11 @@ export function useWizard() {
         : [...selectedRegions, region];
       return prev.filter((s) => newRegions.includes(s.region));
     });
-    setSelectedRestaurants((prev) => {
+    setSelectedFoods((prev) => {
       const newRegions = selectedRegions.includes(region)
         ? selectedRegions.filter((r) => r !== region)
         : [...selectedRegions, region];
-      return prev.filter((r) => newRegions.includes(r.region));
+      return prev.filter((f) => newRegions.includes(f.region));
     });
   }, [selectedRegions]);
 
@@ -76,11 +76,11 @@ export function useWizard() {
     });
   }, []);
 
-  const toggleRestaurant = useCallback((restaurant) => {
-    setSelectedRestaurants((prev) => {
-      const exists = prev.some((r) => r.name === restaurant.name && r.region === restaurant.region);
-      if (exists) return prev.filter((r) => !(r.name === restaurant.name && r.region === restaurant.region));
-      return [...prev, restaurant];
+  const toggleFood = useCallback((food) => {
+    setSelectedFoods((prev) => {
+      const exists = prev.some((f) => f.id === food.id);
+      if (exists) return prev.filter((f) => f.id !== food.id);
+      return [...prev, food];
     });
   }, []);
 
@@ -94,18 +94,18 @@ export function useWizard() {
     switch (step) {
       case 1: return selectedRegions.length > 0;
       case 2: return selectedSpots.length >= 2;
-      case 3: return selectedRestaurants.length >= 1;
+      case 3: return selectedFoods.length >= 1;
       case 4: return duration !== null && travelMode !== null;
       default: return true;
     }
-  }, [step, selectedRegions, selectedSpots, selectedRestaurants, duration, travelMode]);
+  }, [step, selectedRegions, selectedSpots, selectedFoods, duration, travelMode]);
 
   return {
-    step, selectedRegions, selectedSpots, selectedRestaurants,
+    step, selectedRegions, selectedSpots, selectedFoods,
     travelMode, duration, selectedAccomTypes, selectedPriceRange,
     isTransitioning, TOTAL_STEPS, canProceed,
     setTravelMode, setDuration, setSelectedPriceRange,
     nextStep, prevStep, resetAll,
-    toggleRegion, toggleSpot, toggleRestaurant, toggleAccomType,
+    toggleRegion, toggleSpot, toggleFood, toggleAccomType,
   };
 }

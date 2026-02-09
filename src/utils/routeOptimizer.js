@@ -136,27 +136,20 @@ function sortClustersByLocation(clusters) {
 }
 
 // ─── 하루 일정 빌드 ───
-function buildDaySchedule(spots, restaurants, dayIndex, totalDays, travelMode) {
+function buildDaySchedule(spots, foods, dayIndex, totalDays, travelMode) {
   const schedule = [];
   let clock = 9 * 60 + 30; // 09:30 시작
 
-  // 스팟과 맛집을 합쳐서 Nearest Neighbor로 정렬
-  const allPlaces = [
-    ...spots.map((s) => ({ ...s, placeType: "spot" })),
-    ...restaurants.map((r) => ({ ...r, placeType: "meal" })),
-  ];
+  // 관광지만 Nearest Neighbor로 정렬 (음식은 좌표 없음)
+  const withCoords = spots.filter((s) => s.latitude && s.longitude);
+  const withoutCoords = spots.filter((s) => !s.latitude || !s.longitude);
+  const orderedSpots = [...nearestNeighborOrder(withCoords), ...withoutCoords];
 
-  // 좌표 있는 것만 Nearest Neighbor, 없는 것은 뒤에 붙임
-  const withCoords = allPlaces.filter((p) => p.latitude && p.longitude);
-  const withoutCoords = allPlaces.filter((p) => !p.latitude || !p.longitude);
-  const ordered = [...nearestNeighborOrder(withCoords), ...withoutCoords];
-
-  // 스팟과 맛집 분리 (순서 유지)
-  const orderedSpots = ordered.filter((p) => p.placeType === "spot");
-  const orderedMeals = ordered.filter((p) => p.placeType === "meal");
-
-  let spotIdx = 0;
+  // 식사용 음식 (간식/카페 제외)
+  const mealFoods = foods.filter((f) => f.category === "식사");
+  const cafeFoods = foods.filter((f) => f.category === "간식/카페");
   let mealIdx = 0;
+  let spotIdx = 0;
 
   // === 오전 관광 ===
   while (spotIdx < orderedSpots.length && clock < 12 * 60 + 30) {
@@ -164,8 +157,7 @@ function buildDaySchedule(spots, restaurants, dayIndex, totalDays, travelMode) {
     const dur = parseDurationMin(spot.duration);
     schedule.push({ time: formatTime(clock), type: "spot", ...spot });
 
-    // 다음 장소까지 이동 시간 계산
-    let travelTime = 15; // 기본 15분
+    let travelTime = 15;
     if (spotIdx + 1 < orderedSpots.length && spot.latitude && orderedSpots[spotIdx + 1].latitude) {
       const dist = haversineDistance(
         spot.latitude, spot.longitude,
@@ -179,11 +171,19 @@ function buildDaySchedule(spots, restaurants, dayIndex, totalDays, travelMode) {
   }
 
   // === 점심 ===
-  if (mealIdx < orderedMeals.length) {
+  if (mealIdx < mealFoods.length) {
     const lunchTime = Math.max(clock, 12 * 60);
-    const lunch = orderedMeals[mealIdx];
-    schedule.push({ time: formatTime(lunchTime), type: "meal", mealType: "점심", ...lunch });
-    clock = lunchTime + 60 + 15; // 식사 60분 + 이동 15분
+    const food = mealFoods[mealIdx];
+    schedule.push({
+      time: formatTime(lunchTime),
+      type: "meal",
+      mealType: "점심",
+      name: food.name,
+      emoji: food.emoji,
+      description: food.description,
+      restaurants: food.restaurants,
+    });
+    clock = lunchTime + 60 + 15;
     mealIdx++;
   }
 
@@ -206,17 +206,40 @@ function buildDaySchedule(spots, restaurants, dayIndex, totalDays, travelMode) {
     spotIdx++;
   }
 
+  // === 카페 타임 (오후) ===
+  if (cafeFoods.length > 0 && clock < 17 * 60 + 30) {
+    const cafeTime = Math.max(clock, 15 * 60);
+    const cafe = cafeFoods[0];
+    schedule.push({
+      time: formatTime(cafeTime),
+      type: "meal",
+      mealType: "카페",
+      name: cafe.name,
+      emoji: cafe.emoji,
+      description: cafe.description,
+      restaurants: cafe.restaurants,
+    });
+    clock = cafeTime + 40 + 10;
+  }
+
   // === 저녁 ===
-  if (mealIdx < orderedMeals.length && (totalDays > 1 || dayIndex === 0)) {
+  if (mealIdx < mealFoods.length && (totalDays > 1 || dayIndex === 0)) {
     const dinnerTime = Math.max(clock, 18 * 60);
-    const dinner = orderedMeals[mealIdx];
-    schedule.push({ time: formatTime(dinnerTime), type: "meal", mealType: "저녁", ...dinner });
+    const food = mealFoods[mealIdx];
+    schedule.push({
+      time: formatTime(dinnerTime),
+      type: "meal",
+      mealType: "저녁",
+      name: food.name,
+      emoji: food.emoji,
+      description: food.description,
+      restaurants: food.restaurants,
+    });
     mealIdx++;
   }
 
-  // === 남은 관광지 (시간 허용 시) ===
+  // === 남은 관광지 ===
   while (spotIdx < orderedSpots.length) {
-    // 시간이 너무 늦으면 생략
     if (clock > 19 * 60) break;
     const spot = orderedSpots[spotIdx];
     const dur = parseDurationMin(spot.duration);
@@ -263,7 +286,7 @@ function filterAccommodations(accommodations, selectedTypes, selectedPriceRange)
 // ============================================================
 export function optimizeRoute({
   selectedSpots,
-  selectedRestaurants,
+  selectedFoods,
   duration,
   travelMode,
   selectedRegions,
@@ -272,57 +295,44 @@ export function optimizeRoute({
 }) {
   const days = getDayCount(duration);
 
-  // 모든 선택 장소 합치기
   const allSpots = [...selectedSpots];
-  const allMeals = [...selectedRestaurants];
+  const allFoods = [...selectedFoods];
 
   let dayGroups;
 
   if (days === 1) {
-    // 당일치기: 모든 장소를 하나의 그룹
-    dayGroups = [{ spots: allSpots, meals: allMeals }];
+    dayGroups = [{ spots: allSpots, foods: allFoods }];
   } else {
-    // 다일 여행: 관광지를 K-means로 일별 분배
     if (allSpots.length >= days) {
       const clusters = kMeansClusters(allSpots, days);
       const sorted = sortClustersByLocation(clusters);
 
-      // 부족한 날이 있으면 빈 배열로 채움
       while (sorted.length < days) {
         sorted.push([]);
       }
 
-      // 맛집도 각 Day에 배분 (가장 가까운 클러스터에)
-      const mealsByDay = Array.from({ length: days }, () => []);
-      for (const meal of allMeals) {
-        if (!meal.latitude || !meal.longitude) {
-          mealsByDay[0].push(meal);
-          continue;
-        }
+      // 음식은 지역(region) 기준으로 Day에 배분
+      const foodsByDay = Array.from({ length: days }, () => []);
+      for (const food of allFoods) {
+        // 음식의 region과 같은 region의 spot이 있는 Day에 배치
         let bestDay = 0;
-        let bestDist = Infinity;
         for (let d = 0; d < sorted.length; d++) {
-          if (sorted[d].length === 0) continue;
-          const centerLat = sorted[d].reduce((s, p) => s + p.latitude, 0) / sorted[d].length;
-          const centerLon = sorted[d].reduce((s, p) => s + p.longitude, 0) / sorted[d].length;
-          const dist = haversineDistance(meal.latitude, meal.longitude, centerLat, centerLon);
-          if (dist < bestDist) {
-            bestDist = dist;
+          if (sorted[d].some((s) => s.region === food.region)) {
             bestDay = d;
+            break;
           }
         }
-        mealsByDay[bestDay].push(meal);
+        foodsByDay[bestDay].push(food);
       }
 
       dayGroups = sorted.map((spots, i) => ({
         spots,
-        meals: mealsByDay[i] || [],
+        foods: foodsByDay[i] || [],
       }));
     } else {
-      // 장소가 일수보다 적으면 단순 분배
       dayGroups = Array.from({ length: days }, (_, i) => ({
         spots: i < allSpots.length ? [allSpots[i]] : [],
-        meals: i === 0 ? allMeals : [],
+        foods: i === 0 ? allFoods : [],
       }));
     }
   }
@@ -331,8 +341,8 @@ export function optimizeRoute({
   const itinerary = [];
 
   for (let day = 0; day < days; day++) {
-    const group = dayGroups[day] || { spots: [], meals: [] };
-    const schedule = buildDaySchedule(group.spots, group.meals, day, days, travelMode);
+    const group = dayGroups[day] || { spots: [], foods: [] };
+    const schedule = buildDaySchedule(group.spots, group.foods, day, days, travelMode);
 
     // 숙소 선택 (마지막 날 제외)
     let accommodationOptions = [];
@@ -353,7 +363,7 @@ export function optimizeRoute({
     // Day 제목
     const dayRegions = [...new Set([
       ...group.spots.map((s) => s.region),
-      ...group.meals.map((m) => m.region),
+      ...group.foods.map((f) => f.region),
     ])].filter(Boolean);
     const regionLabel = dayRegions.length > 0 ? dayRegions.join(" · ") : selectedRegions.join(" · ");
     const dayTitle = days === 1
