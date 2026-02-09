@@ -11,9 +11,9 @@ export default function SpotSwapModal({ currentSpot, alternatives, onSwap, onClo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-end justify-center" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center px-4" onClick={onClose}>
       <div
-        className="w-full max-w-lg rounded-t-3xl p-6 pb-8 max-h-[80vh] overflow-y-auto animate-slide-up"
+        className="w-full max-w-lg rounded-3xl p-6 max-h-[75vh] overflow-y-auto animate-slide-up shadow-2xl"
         style={{ background: "var(--bg-primary)" }}
         onClick={(e) => e.stopPropagation()}
       >
