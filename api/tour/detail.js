@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
     // 공통정보 + 소개정보 병렬 호출
     const [common, intro] = await Promise.all([
-      callTourApi("detailCommon1", {
+      callTourApi("detailCommon2", {
         contentId,
         defaultYN: "Y",
         overviewYN: "Y",
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         firstImageYN: "Y",
       }),
       contentTypeId
-        ? callTourApi("detailIntro1", { contentId, contentTypeId })
+        ? callTourApi("detailIntro2", { contentId, contentTypeId })
         : Promise.resolve([]),
     ]);
 

@@ -1,4 +1,4 @@
-const BASE_URL = "https://apis.data.go.kr/B551011/KorService1";
+const BASE_URL = "https://apis.data.go.kr/B551011/KorService2";
 
 // 서버리스 인스턴스 내 메모리 캐시 (30분 TTL)
 const cache = new Map();

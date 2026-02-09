@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       params.sigunguCode = String(REGION_TO_SIGUNGU[region]);
     }
 
-    const items = await callTourApi("areaBasedList1", params);
+    const items = await callTourApi("areaBasedList2", params);
     res.status(200).json({ success: true, items, count: items.length });
   } catch (err) {
     console.error("spots proxy error:", err);
