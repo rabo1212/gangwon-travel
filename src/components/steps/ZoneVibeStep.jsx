@@ -20,7 +20,7 @@ export default function ZoneVibeStep({ wizard }) {
     <div className="flex flex-col min-h-screen bg-[#0f0f1a]">
       <StepHeader
         title="Zone & Vibe 선택"
-        subtitle="어떤 강원도를 채굴할까요?"
+        subtitle="어떤 강원도를 만나볼까요?"
         onBack={prevStep}
         dark
       />
@@ -117,7 +117,7 @@ export default function ZoneVibeStep({ wizard }) {
                     </span>
                   );
                 })}
-                <span className="text-white/40"> 여행 데이터를 채굴합니다</span>
+                <span className="text-white/40"> 여행을 시작합니다</span>
               </p>
             </div>
           )}

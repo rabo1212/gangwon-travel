@@ -12,7 +12,7 @@ function StepLoader() {
     <div className="min-h-screen bg-[#0f0f1a] flex items-center justify-center">
       <div className="text-center">
         <div className="w-10 h-10 border-4 border-[#00A86B] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-white/40 text-sm">데이터 채굴 중...</p>
+        <p className="text-white/40 text-sm">불러오는 중...</p>
       </div>
     </div>
   );

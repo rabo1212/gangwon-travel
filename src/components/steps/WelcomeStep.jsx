@@ -30,9 +30,9 @@ export default function WelcomeStep({ onNext }) {
           "가볍게 누르고, 깊게 빠지다"
         </p>
         <p className="text-white/40 text-sm max-w-xs leading-relaxed mb-10">
-          강원도는 대한민국 최대의 경험 데이터 광산.
+          강원도의 숨은 경험 데이터를 발견하고,
           <br />
-          당신만의 여행 데이터를 채굴하세요.
+          나만의 여행 루트를 완성하세요.
         </p>
 
         {/* CTA */}
@@ -40,12 +40,12 @@ export default function WelcomeStep({ onNext }) {
           onClick={onNext}
           className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#00A86B] to-[#0066CC] hover:from-[#00c07b] hover:to-[#0077ee] text-white text-xl font-bold rounded-2xl shadow-lg shadow-[#00A86B]/20 hover:shadow-xl hover:shadow-[#00A86B]/30 transition-all duration-300 transform hover:scale-105 active:scale-95"
         >
-          채굴 시작하기
+          여행 시작하기
           <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
         </button>
 
         <p className="mt-10 text-xs text-white/20">
-          DATA MINER EXPERIENCE
+          DEEP DIVE INTO GANGWON
         </p>
       </div>
     </div>

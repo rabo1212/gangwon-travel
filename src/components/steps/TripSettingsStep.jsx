@@ -105,7 +105,7 @@ export default function TripSettingsStep({ wizard }) {
         </div>
       </div>
 
-      <BottomNav onNext={nextStep} canNext={canProceed} nextLabel="루트 채굴하기" />
+      <BottomNav onNext={nextStep} canNext={canProceed} nextLabel="루트 만들기" />
     </div>
   );
 }
