@@ -1,12 +1,15 @@
-import { useState, useRef, useEffect } from "react";
-import { ChevronLeft, RotateCcw, Database, Save } from "lucide-react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import { ChevronLeft, RotateCcw, Database, Save, Sparkles } from "lucide-react";
 import { saveTrip } from "../../utils/tripStorage";
+import { getFavorites, toggleFavorite } from "../../utils/favoriteStorage";
 import { TRAVEL_STYLES } from "../../data/constants";
+import DayTabs from "../result/DayTabs";
 import ItineraryDay from "../result/ItineraryDay";
 import TransportInfo from "../result/TransportInfo";
 import BudgetSummary from "../result/BudgetSummary";
 import ShareSection from "../result/ShareSection";
 import SpotSwapModal from "../result/SpotSwapModal";
+import SpotDetailModal from "../result/SpotDetailModal";
 import KakaoMap from "../map/KakaoMap";
 
 export default function ResultStep({ wizard, route, isDark }) {
@@ -19,6 +22,19 @@ export default function ResultStep({ wizard, route, isDark }) {
   const [saved, setSaved] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const scrollRef = useRef(null);
+
+  // Phase 1: Day 탭
+  const [activeDay, setActiveDay] = useState(null);
+
+  // Phase 5: 찜/하트
+  const [favorites, setFavorites] = useState(() => new Set(getFavorites().map((f) => f.name)));
+
+  // Phase 6: 장소 상세 모달
+  const [detailSpot, setDetailSpot] = useState(null);
+
+  // Phase 9: 지도↔타임라인 연동
+  const kakaoMapRef = useRef(null);
+  const cardRefsMap = useRef(new Map());
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -74,10 +90,67 @@ export default function ResultStep({ wizard, route, isDark }) {
     setSwapModal(null);
   };
 
+  // Phase 5: 찜 토글
+  const handleToggleFavorite = useCallback((spot) => {
+    const isNowFavorited = toggleFavorite(spot);
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (isNowFavorited) next.add(spot.name);
+      else next.delete(spot.name);
+      return next;
+    });
+  }, []);
+
+  // Phase 9: 마커 클릭 → 카드 스크롤
+  const handleMarkerClick = useCallback((spotName) => {
+    const cardEl = cardRefsMap.current.get(spotName);
+    if (cardEl) {
+      cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      cardEl.classList.add("ring-2", "ring-[#0066CC]");
+      setTimeout(() => cardEl.classList.remove("ring-2", "ring-[#0066CC]"), 2000);
+    }
+  }, []);
+
+  // Phase 9: 카드 클릭 → 지도 이동
+  const handleCardClickOnMap = useCallback((spot) => {
+    if (spot.latitude && spot.longitude) {
+      kakaoMapRef.current?.focusMarker(spot.name, spot.latitude, spot.longitude);
+    }
+  }, []);
+
   const totalSpots = displayRoute.itinerary.reduce(
     (sum, day) => sum + day.schedule.filter((s) => s.type === "spot").length,
     0
   );
+
+  // Phase 1: Day 필터
+  const filteredItinerary = useMemo(() => {
+    if (activeDay === null) return displayRoute.itinerary;
+    return [displayRoute.itinerary[activeDay]].filter(Boolean);
+  }, [displayRoute, activeDay]);
+
+  // Phase 2: AI 요약 문구
+  const aiSummary = useMemo(() => {
+    const vibeLabels = selectedVibes
+      .map((v) => {
+        const s = TRAVEL_STYLES.find((t) => t.id === v);
+        return s?.label;
+      })
+      .filter(Boolean)
+      .join(" · ");
+    const durationText =
+      duration === "당일치기" ? "당일" : duration === "1박2일" ? "1박 2일" : "2박 3일";
+    return `${selectedZone?.emoji} ${selectedZone?.name}에서 ${vibeLabels}을 즐기는 ${durationText} 여행 추천일정입니다`;
+  }, [selectedZone, selectedVibes, duration]);
+
+  // spotStartIndex 계산
+  const getSpotStartIndex = (dayIdx) => {
+    let count = 1;
+    for (let i = 0; i < dayIdx; i++) {
+      count += displayRoute.itinerary[i].schedule.filter((s) => s.type === "spot").length;
+    }
+    return count;
+  };
 
   return (
     <div className="flex flex-col min-h-screen" style={{ background: "var(--bg-primary)" }}>
@@ -98,7 +171,6 @@ export default function ResultStep({ wizard, route, isDark }) {
             scrolled ? "py-3" : "py-6 sm:py-8"
           }`}
         >
-          {/* 컴팩트 모드: 한 줄 요약 */}
           {scrolled ? (
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5 text-xs opacity-50">
@@ -153,31 +225,64 @@ export default function ResultStep({ wizard, route, isDark }) {
 
       {/* 스크롤 가능 본문 */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
+        {/* Phase 2: AI 요약 문구 */}
+        <div
+          className="mx-3 sm:mx-4 mt-3 px-4 py-3 rounded-xl flex items-start gap-2"
+          style={{
+            background: isDark ? "rgba(0,168,107,0.08)" : "#F0FDF4",
+            border: `1px solid ${isDark ? "rgba(0,168,107,0.2)" : "#BBF7D0"}`,
+          }}
+        >
+          <Sparkles className="w-4 h-4 mt-0.5 shrink-0" style={{ color: "#00A86B" }} />
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            {aiSummary}
+          </p>
+        </div>
+
         {/* 카카오맵 */}
         <div
           className="mx-3 sm:mx-4 mt-3 sm:mt-4 rounded-2xl overflow-hidden shadow-sm"
           style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)" }}
         >
           <KakaoMap
+            ref={kakaoMapRef}
             itinerary={displayRoute.itinerary}
+            activeDay={activeDay}
             expanded={mapExpanded}
             onToggleExpand={() => setMapExpanded((v) => !v)}
+            onMarkerClick={handleMarkerClick}
           />
         </div>
 
+        {/* Phase 1: Day 탭 */}
+        <DayTabs
+          days={displayRoute.itinerary}
+          activeDay={activeDay}
+          onSelectDay={setActiveDay}
+        />
+
         {/* 일정 */}
         <div className="px-3 sm:px-4 pb-36 sm:pb-40">
-          {displayRoute.itinerary.map((day, dayIdx) => (
-            <ItineraryDay
-              key={dayIdx}
-              day={day}
-              dayIndex={dayIdx}
-              alternatives={displayRoute.alternatives}
-              onSwapRequest={handleSwapRequest}
-              travelMode={travelMode}
-              isDark={isDark}
-            />
-          ))}
+          {filteredItinerary.map((day) => {
+            const originalDayIdx = displayRoute.itinerary.indexOf(day);
+            return (
+              <ItineraryDay
+                key={day.day}
+                day={day}
+                dayIndex={originalDayIdx}
+                alternatives={displayRoute.alternatives}
+                onSwapRequest={handleSwapRequest}
+                travelMode={travelMode}
+                isDark={isDark}
+                spotStartIndex={getSpotStartIndex(originalDayIdx)}
+                onToggleFavorite={handleToggleFavorite}
+                favoriteSet={favorites}
+                onDetailOpen={setDetailSpot}
+                onCardClick={handleCardClickOnMap}
+                cardRefsMap={cardRefsMap}
+              />
+            );
+          })}
 
           <TransportInfo transportInfo={displayRoute.transportInfo} travelMode={travelMode} isDark={isDark} />
           <BudgetSummary itinerary={displayRoute.itinerary} isDark={isDark} />
@@ -235,6 +340,29 @@ export default function ResultStep({ wizard, route, isDark }) {
           onSwap={handleSwap}
           onClose={() => setSwapModal(null)}
           isDark={isDark}
+        />
+      )}
+
+      {detailSpot && (
+        <SpotDetailModal
+          spot={detailSpot}
+          isDark={isDark}
+          onClose={() => setDetailSpot(null)}
+          hasAlternatives={!!displayRoute.alternatives[detailSpot.name]?.length}
+          onSwapRequest={() => {
+            const dayIdx = displayRoute.itinerary.findIndex((d) =>
+              d.schedule.some((s) => s.name === detailSpot.name)
+            );
+            if (dayIdx >= 0) {
+              const schedIdx = displayRoute.itinerary[dayIdx].schedule.findIndex(
+                (s) => s.name === detailSpot.name
+              );
+              if (schedIdx >= 0) {
+                setDetailSpot(null);
+                handleSwapRequest(dayIdx, schedIdx, detailSpot);
+              }
+            }
+          }}
         />
       )}
     </div>

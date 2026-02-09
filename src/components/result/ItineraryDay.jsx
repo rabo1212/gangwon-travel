@@ -5,7 +5,13 @@ import AccommodationCard from "./AccommodationCard";
 import TravelSegment from "./TravelSegment";
 import { haversineDistance } from "../../utils/distance";
 
-export default function ItineraryDay({ day, dayIndex, alternatives, onSwapRequest, travelMode, isDark }) {
+export default function ItineraryDay({
+  day, dayIndex, alternatives, onSwapRequest, travelMode, isDark,
+  spotStartIndex = 1, onToggleFavorite, favoriteSet, onDetailOpen,
+  onCardClick, cardRefsMap,
+}) {
+  let spotCounter = spotStartIndex;
+
   return (
     <div className="mt-6">
       <div className="flex items-center gap-3 mb-4">
@@ -42,6 +48,8 @@ export default function ItineraryDay({ day, dayIndex, alternatives, onSwapReques
             travelInfo = { distanceKm: roadDist, timeMinutes: minutes };
           }
 
+          const currentSpotIndex = item.type === "spot" ? spotCounter++ : undefined;
+
           return (
             <div key={idx}>
               {travelInfo && (
@@ -53,7 +61,11 @@ export default function ItineraryDay({ day, dayIndex, alternatives, onSwapReques
                 />
               )}
               <div
-                className="relative rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200"
+                ref={(el) => {
+                  if (el && item.name) cardRefsMap?.current?.set(item.name, el);
+                }}
+                onClick={() => item.type === "spot" && onCardClick?.(item)}
+                className="relative rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                 style={{
                   background: "var(--bg-card)",
                   border: "1px solid var(--border-color)",
@@ -74,6 +86,10 @@ export default function ItineraryDay({ day, dayIndex, alternatives, onSwapReques
                       <SpotCard
                         item={item}
                         isDark={isDark}
+                        spotIndex={currentSpotIndex}
+                        isFavorited={favoriteSet?.has(item.name)}
+                        onToggleFavorite={onToggleFavorite}
+                        onDetailOpen={onDetailOpen}
                         onSwap={
                           alternatives && alternatives[item.name]
                             ? () => onSwapRequest(dayIndex, idx, item)

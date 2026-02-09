@@ -1,21 +1,35 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, forwardRef, useImperativeHandle, useCallback } from "react";
 import { Map as MapIcon, Maximize2, Minimize2 } from "lucide-react";
 
 const DAY_COLORS = ["#0066CC", "#00A86B", "#E85D04"];
 
-export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
+const CATEGORY_COLORS = {
+  "체험/액티비티": "#3B82F6",
+  "맛집/미식": "#EF4444",
+  "휴양/힐링": "#22C55E",
+  "문화/역사": "#8B5CF6",
+  "포토스팟/감성": "#EC4899",
+  "자연/트레킹": "#059669",
+};
+
+const KakaoMap = forwardRef(function KakaoMap(
+  { itinerary, activeDay = null, expanded, onToggleExpand, onMarkerClick },
+  ref
+) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const overlaysRef = useRef([]);
   const polylinesRef = useRef([]);
   const infoWindowRef = useRef(null);
+  const markerNameMap = useRef(new Map());
   const [mapReady, setMapReady] = useState(false);
   const [error, setError] = useState(null);
 
-  // 좌표 있는 장소만 메모이제이션
+  // 좌표 있는 장소만 메모이제이션 (Day 필터 적용)
   const allPlaces = useMemo(() => {
     const places = [];
     itinerary.forEach((day, dayIdx) => {
+      if (activeDay !== null && dayIdx !== activeDay) return;
       day.schedule.forEach((item) => {
         if (item.latitude && item.longitude) {
           places.push({ ...item, dayIdx, orderNum: places.length + 1 });
@@ -23,9 +37,41 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
       });
     });
     return places;
-  }, [itinerary]);
+  }, [itinerary, activeDay]);
 
-  // 카카오맵 SDK 로드 & 초기화 (재시도 포함)
+  // 외부에서 호출 가능한 메서드
+  useImperativeHandle(ref, () => ({
+    focusMarker(spotName, lat, lng) {
+      if (!mapInstance.current) return;
+      const position = new window.kakao.maps.LatLng(lat, lng);
+      mapInstance.current.panTo(position);
+      mapInstance.current.setLevel(5);
+
+      // InfoWindow 열기
+      if (infoWindowRef.current) {
+        infoWindowRef.current.close();
+      }
+      const place = allPlaces.find((p) => p.name === spotName);
+      if (place) {
+        const infoContent = `
+          <div style="padding: 12px 16px; max-width: 220px; font-size: 13px; line-height: 1.5;">
+            <strong style="font-size: 14px;">${place.name}</strong>
+            ${place.description ? `<p style="margin: 4px 0 0; color: #666; font-size: 11px;">${place.description.length > 40 ? place.description.slice(0, 40) + "…" : place.description}</p>` : ""}
+            ${place.address ? `<p style="margin: 4px 0 0; color: #888; font-size: 10px;">📍 ${place.address.length > 30 ? place.address.slice(0, 30) + "…" : place.address}</p>` : ""}
+            ${place.hours ? `<p style="margin: 2px 0 0; color: #0066CC; font-size: 10px;">🕐 ${place.hours}</p>` : ""}
+          </div>
+        `;
+        const infoWindow = new window.kakao.maps.InfoWindow({
+          content: infoContent,
+          position,
+        });
+        infoWindow.open(mapInstance.current);
+        infoWindowRef.current = infoWindow;
+      }
+    },
+  }), [mapReady, allPlaces]);
+
+  // 카카오맵 SDK 로드 & 초기화
   useEffect(() => {
     let retryCount = 0;
     const maxRetries = 10;
@@ -33,7 +79,6 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
 
     function tryInitMap() {
       if (cancelled) return;
-
       if (!window.kakao || !window.kakao.maps) {
         retryCount++;
         if (retryCount >= maxRetries) {
@@ -43,25 +88,19 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
         setTimeout(tryInitMap, 500);
         return;
       }
-
       window.kakao.maps.load(() => {
         if (cancelled || !mapRef.current) return;
-
         const map = new window.kakao.maps.Map(mapRef.current, {
           center: new window.kakao.maps.LatLng(37.8, 128.5),
           level: 10,
         });
-
         mapInstance.current = map;
         setMapReady(true);
       });
     }
 
     tryInitMap();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   // 마커 & 폴리라인 표시
@@ -70,11 +109,12 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
 
     const map = mapInstance.current;
 
-    // 기존 오버레이 제거
+    // 기존 제거
     overlaysRef.current.forEach((o) => o.setMap(null));
     overlaysRef.current = [];
     polylinesRef.current.forEach((p) => p.setMap(null));
     polylinesRef.current = [];
+    markerNameMap.current.clear();
     if (infoWindowRef.current) {
       infoWindowRef.current.close();
       infoWindowRef.current = null;
@@ -83,8 +123,12 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
     const bounds = new window.kakao.maps.LatLngBounds();
     let globalOrderNum = 0;
 
-    // Day별로 마커 + 폴리라인
-    itinerary.forEach((day, dayIdx) => {
+    const filteredItinerary = activeDay !== null
+      ? [{ ...itinerary[activeDay], _dayIdx: activeDay }]
+      : itinerary.map((d, i) => ({ ...d, _dayIdx: i }));
+
+    filteredItinerary.forEach((day) => {
+      const dayIdx = day._dayIdx;
       const dayColor = DAY_COLORS[dayIdx % DAY_COLORS.length];
       const dayPlaces = day.schedule.filter((p) => p.latitude && p.longitude);
       const linePath = [];
@@ -95,8 +139,10 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
         bounds.extend(position);
         linePath.push(position);
 
-        const isSpot = place.type === "spot";
-        const bgColor = isSpot ? dayColor : "#E85D04";
+        // 카테고리별 마커 색상
+        const bgColor = place.type === "meal"
+          ? (place.mealType === "카페" ? "#F97316" : "#EF4444")
+          : (CATEGORY_COLORS[place.category] || dayColor);
 
         const content = document.createElement("div");
         content.innerHTML = `
@@ -143,8 +189,10 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
           </div>
         `;
 
-        // 클릭 시 InfoWindow 표시
         content.addEventListener("click", () => {
+          // 외부 콜백 (타임라인 스크롤 연동)
+          onMarkerClick?.(place.name);
+
           if (infoWindowRef.current) {
             infoWindowRef.current.close();
           }
@@ -171,27 +219,27 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
         });
         overlay.setMap(map);
         overlaysRef.current.push(overlay);
+        markerNameMap.current.set(place.name, { overlay, position });
       });
 
-      // 폴리라인
+      // 점선 폴리라인
       if (linePath.length >= 2) {
         const polyline = new window.kakao.maps.Polyline({
           path: linePath,
-          strokeWeight: 3,
+          strokeWeight: 4,
           strokeColor: dayColor,
-          strokeOpacity: 0.7,
-          strokeStyle: "solid",
+          strokeOpacity: 0.6,
+          strokeStyle: "shortdash",
         });
         polyline.setMap(map);
         polylinesRef.current.push(polyline);
       }
     });
 
-    // 모든 마커가 보이도록 bounds 조정
     if (allPlaces.length > 0) {
       map.setBounds(bounds, 60, 60, 60, 60);
     }
-  }, [mapReady, allPlaces, itinerary]);
+  }, [mapReady, allPlaces, itinerary, activeDay, onMarkerClick]);
 
   // expanded 변경 시 지도 리사이즈
   useEffect(() => {
@@ -242,7 +290,6 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
           expanded ? "h-[450px]" : "h-[300px]"
         }`}
       />
-      {/* 확대/축소 버튼 */}
       <button
         onClick={onToggleExpand}
         className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-md border border-gray-200 hover:bg-white transition-colors"
@@ -254,20 +301,24 @@ export default function KakaoMap({ itinerary, expanded, onToggleExpand }) {
           <Maximize2 className="w-4 h-4 text-gray-600" />
         )}
       </button>
-      {/* Day 범례 */}
       {itinerary.length > 1 && (
         <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-gray-200 flex gap-3">
-          {itinerary.map((day, i) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ background: DAY_COLORS[i % DAY_COLORS.length] }}
-              />
-              <span className="text-xs font-medium text-gray-600">{day.day}일차</span>
-            </div>
-          ))}
+          {itinerary.map((day, i) => {
+            const isActive = activeDay === null || activeDay === i;
+            return (
+              <div key={i} className={`flex items-center gap-1.5 ${isActive ? "" : "opacity-30"}`}>
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ background: DAY_COLORS[i % DAY_COLORS.length] }}
+                />
+                <span className="text-xs font-medium text-gray-600">{day.day}일차</span>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
   );
-}
+});
+
+export default KakaoMap;

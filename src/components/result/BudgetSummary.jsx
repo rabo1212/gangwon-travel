@@ -44,9 +44,15 @@ export default function BudgetSummary({ itinerary, isDark }) {
   let cafeMin = 0,
     cafeMax = 0,
     cafeCount = 0;
+  let hasSpots = false;
+  let hasAccommodation = false;
 
   itinerary.forEach((day) => {
+    if (day.accommodationOptions && day.accommodationOptions.length > 0) {
+      hasAccommodation = true;
+    }
     day.schedule.forEach((item) => {
+      if (item.type === "spot") hasSpots = true;
       if (item.type !== "meal") return;
       const isCafe = item.mealType === "카페" || item.category === "간식/카페";
 
@@ -138,6 +144,18 @@ export default function BudgetSummary({ itinerary, isDark }) {
               </span>
             </div>
           )}
+          {hasSpots && (
+            <div className="flex items-center justify-between text-sm">
+              <span style={{ color: "var(--text-secondary)" }}>🎫 입장료/체험비</span>
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>장소별 상이</span>
+            </div>
+          )}
+          {hasAccommodation && (
+            <div className="flex items-center justify-between text-sm">
+              <span style={{ color: "var(--text-secondary)" }}>🏨 숙박비</span>
+              <span className="text-xs" style={{ color: "var(--text-muted)" }}>숙소별 상이</span>
+            </div>
+          )}
 
           <div className="pt-3 flex items-center justify-between" style={{ borderTop: "1px solid var(--border-color)" }}>
             <span className="font-bold" style={{ color: "var(--text-primary)" }}>
@@ -150,7 +168,7 @@ export default function BudgetSummary({ itinerary, isDark }) {
         </div>
 
         <p className="text-xs mt-3" style={{ color: "var(--text-muted)" }}>
-          * 식비만 포함된 예상 금액입니다. 입장료/숙박비는 별도입니다.
+          * 합계는 식비/카페만 포함된 예상 금액입니다. 입장료·체험비·숙박비는 현장에서 확인해주세요.
         </p>
       </div>
     </div>

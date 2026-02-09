@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Copy, Check, Download, Image, Database } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Copy, Check, Download, Image, Database, MessageCircle } from "lucide-react";
 import { TRAVEL_STYLES } from "../../data/constants";
 import html2canvas from "html2canvas";
 
@@ -197,6 +197,36 @@ export default function ShareSection({ route, zone, vibes, duration, travelMode 
   const [saveError, setSaveError] = useState(null);
   const cardRef = useRef(null);
 
+  // 카카오 SDK 초기화
+  useEffect(() => {
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      window.Kakao.init("af2fb98bb171bd8c36e50fb3fd1fc929");
+    }
+  }, []);
+
+  const handleKakaoShare = () => {
+    if (!window.Kakao || !window.Kakao.isInitialized()) return;
+    const vibeLabels = vibes.map((v) => {
+      const s = TRAVEL_STYLES.find((t) => t.id === v);
+      return s ? `${s.emoji}${s.label}` : v;
+    }).join(" · ");
+    const totalSpots = route.itinerary.reduce(
+      (sum, day) => sum + day.schedule.filter((s) => s.type === "spot").length, 0
+    );
+    window.Kakao.Share.sendDefault({
+      objectType: "feed",
+      content: {
+        title: `${zone?.emoji} ${zone?.name} ${duration} 여행 코스`,
+        description: `${vibeLabels} | 📍${totalSpots}곳 | ${travelMode}`,
+        imageUrl: "https://images.unsplash.com/photo-1580151524530-6fa5e4cbf48d?w=600&h=400&fit=crop",
+        link: { mobileWebUrl: window.location.href, webUrl: window.location.href },
+      },
+      buttons: [
+        { title: "여행 코스 보기", link: { mobileWebUrl: window.location.href, webUrl: window.location.href } },
+      ],
+    });
+  };
+
   const shareText = route
     ? buildItineraryText(route, zone, vibes, duration, travelMode)
     : "";
@@ -328,16 +358,25 @@ export default function ShareSection({ route, zone, vibes, duration, travelMode 
               {saving ? "준비 중..." : "이미지 공유"}
             </button>
           </div>
-          <button
-            onClick={handleCopy}
-            className={`w-full flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 transform ${
-              copied ? "bg-[#00A86B] text-white" : ""
-            }`}
-            style={!copied ? { background: "var(--bg-input)", color: "var(--text-secondary)" } : undefined}
-          >
-            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            {copied ? "복사 완료!" : "텍스트로 복사"}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={handleKakaoShare}
+              className="flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-[#FEE500] text-[#3C1E1E] rounded-2xl font-bold text-sm transition-colors active:scale-95 transform"
+            >
+              <MessageCircle className="w-4 h-4" />
+              카카오톡 공유
+            </button>
+            <button
+              onClick={handleCopy}
+              className={`flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all active:scale-95 transform ${
+                copied ? "bg-[#00A86B] text-white" : ""
+              }`}
+              style={!copied ? { background: "var(--bg-input)", color: "var(--text-secondary)" } : undefined}
+            >
+              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? "복사 완료!" : "텍스트 복사"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { MapPin, Clock, Lightbulb, ArrowRightLeft } from "lucide-react";
+import { MapPin, Clock, Lightbulb, ArrowRightLeft, Heart } from "lucide-react";
 import { getSpotImageUrl, getSpotGradient } from "../../utils/spotImages";
 
-export default function SpotCard({ item, isDark, onSwap }) {
+export default function SpotCard({ item, isDark, onSwap, spotIndex, isFavorited, onToggleFavorite, onDetailOpen }) {
   const [imgError, setImgError] = useState(false);
 
   const categoryColors = {
@@ -23,7 +23,10 @@ export default function SpotCard({ item, isDark, onSwap }) {
   return (
     <div className="-mx-5 -mt-5">
       {/* 대표 이미지 */}
-      <div className="relative overflow-hidden rounded-t-2xl">
+      <div
+        className="relative overflow-hidden rounded-t-2xl cursor-pointer"
+        onClick={() => onDetailOpen?.(item)}
+      >
         {!imgError ? (
           <img
             src={imageUrl}
@@ -39,6 +42,32 @@ export default function SpotCard({ item, isDark, onSwap }) {
             <span className="text-5xl">{item.emoji}</span>
           </div>
         )}
+
+        {/* 번호 뱃지 */}
+        {spotIndex !== undefined && (
+          <div className="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-xs font-extrabold text-[#0066CC] shadow-md z-10">
+            {spotIndex}
+          </div>
+        )}
+
+        {/* 하트 버튼 */}
+        {onToggleFavorite && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(item);
+            }}
+            className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform z-10"
+            aria-label={isFavorited ? "찜 해제" : "찜하기"}
+          >
+            <Heart
+              className={`w-4 h-4 transition-colors ${
+                isFavorited ? "fill-red-500 text-red-500" : "text-white"
+              }`}
+            />
+          </button>
+        )}
+
         {/* 그라데이션 오버레이 + 장소명 */}
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-4 py-3">
           <span className="text-white text-sm font-bold drop-shadow-sm">
