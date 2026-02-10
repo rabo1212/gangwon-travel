@@ -31,6 +31,7 @@ export function useWizard() {
   }, [step, isTransitioning, animateStep]);
 
   const goToStep = useCallback((targetStep) => {
+    if (targetStep < 0 || targetStep >= TOTAL_STEPS) return;
     setIsTransitioning(true);
     setTimeout(() => {
       setStep(targetStep);
