@@ -79,6 +79,8 @@ export const yangyangRestaurants = [
     priceRange: "10,000~15,000원",
     hours: "10:30~19:30 (목 휴무)",
     address: "강원특별자치도 양양군 서면 설악산로 630",
+    latitude: 38.0766,
+    longitude: 128.6159,
     description: "오색약수터 가는 길목의 산채 전문점, 더덕구이도 인기",
   },
   {
@@ -105,6 +107,8 @@ export const yangyangRestaurants = [
     priceRange: "10,000~16,000원",
     hours: "11:00~20:00 (월 휴무)",
     address: "강원특별자치도 양양군 현북면 인구길 38",
+    latitude: 38.0748,
+    longitude: 128.6167,
     description: "서퍼들이 즐겨 찾는 수제 스매쉬버거와 크래프트 맥주 전문점",
   },
   {
@@ -131,6 +135,8 @@ export const yangyangRestaurants = [
     priceRange: "5,000~8,000원",
     hours: "08:00~21:00 (연중무휴)",
     address: "강원특별자치도 양양군 현북면 하조대해안길 85",
+    latitude: 38.0734,
+    longitude: 128.6199,
     description: "서핑 문화가 느껴지는 비치 카페, 루프탑에서 바다 뷰 감상",
   },
   {
@@ -171,6 +177,8 @@ export const yangyangRestaurants = [
     priceRange: "14,000~19,000원",
     hours: "15:00~22:00 (월 휴무)",
     address: "강원특별자치도 양양군 양양읍 남문로 88",
+    latitude: 38.0734,
+    longitude: 128.6212,
     description: "바삭한 옛날통닭과 간장소스 닭강정이 서퍼들에게 인기인 치킨집",
   },
 ];

@@ -141,6 +141,8 @@ export const samcheokSpots = [
     emoji: "🕳️",
     description: "환선굴 인근의 소규모 동굴로 탐험 체험 가능",
     address: "강원특별자치도 삼척시 신기면 환선로 800",
+    latitude: 37.3834,
+    longitude: 129.1888,
     hours: "09:00~18:00",
     tip: "환선굴과 함께 통합권 구매 시 할인",
     duration: "30분~1시간",

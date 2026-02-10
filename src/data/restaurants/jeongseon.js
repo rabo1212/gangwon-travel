@@ -9,6 +9,8 @@ export const jeongseonRestaurants = [
     priceRange: "9,000~11,000원",
     hours: "10:00~19:00 (화 휴무)",
     address: "강원특별자치도 정선군 정선읍 봉양리 아리랑로 55",
+    latitude: 37.5628,
+    longitude: 127.0151,
     description: "정선 감자로 빚은 옹심이와 칼국수가 유명한 향토 맛집",
   },
   {
@@ -35,6 +37,8 @@ export const jeongseonRestaurants = [
     priceRange: "8,000~10,000원",
     hours: "09:00~18:00 (수 휴무)",
     address: "강원특별자치도 정선군 여량면 아우라지길 38",
+    latitude: 37.3791,
+    longitude: 128.658,
     description: "아우라지 강변 30년 전통의 막국수와 감자전이 별미",
   },
   {
@@ -61,6 +65,8 @@ export const jeongseonRestaurants = [
     priceRange: "10,000~16,000원",
     hours: "10:00~19:00 (목 휴무)",
     address: "강원특별자치도 정선군 남면 민둥산로 110",
+    latitude: 37.3805,
+    longitude: 128.6599,
     description: "민둥산 자락에서 직접 채취한 산나물로 비빈 건강 비빔밥",
   },
   {
@@ -73,6 +79,8 @@ export const jeongseonRestaurants = [
     priceRange: "8,000~10,000원",
     hours: "08:00~18:00 (연중무휴)",
     address: "강원특별자치도 정선군 정선읍 정선시장길 22",
+    latitude: 37.381,
+    longitude: 128.6628,
     description: "정선 오일장 터 원조 두부집, 콩을 직접 갈아 만드는 순두부",
   },
   {
@@ -85,6 +93,8 @@ export const jeongseonRestaurants = [
     priceRange: "30,000~55,000원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 정선군 고한읍 하이원길 265",
+    latitude: 37.3788,
+    longitude: 128.663,
     description: "하이원리조트 내 드라이에이징 스테이크 전문 레스토랑",
   },
   {
@@ -97,6 +107,8 @@ export const jeongseonRestaurants = [
     priceRange: "13,000~19,000원",
     hours: "11:00~20:30 (화 휴무)",
     address: "강원특별자치도 정선군 고한읍 고한로 150",
+    latitude: 37.3814,
+    longitude: 128.662,
     description: "고한 스키장 인근 화덕피자와 파스타를 즐기는 맛집",
   },
   {
@@ -109,6 +121,8 @@ export const jeongseonRestaurants = [
     priceRange: "7,000~15,000원",
     hours: "11:00~20:00 (일 휴무)",
     address: "강원특별자치도 정선군 정선읍 중앙로 42",
+    latitude: 37.3807,
+    longitude: 128.6615,
 description: "정선읍 45년 전통 중화요리 맛집, 해물짬뽕이 인기",
   },
   {
@@ -135,6 +149,8 @@ description: "정선읍 45년 전통 중화요리 맛집, 해물짬뽕이 인기
     priceRange: "2,000~5,000원",
     hours: "07:00~18:00 (연중무휴)",
     address: "강원특별자치도 정선군 정선읍 정선시장길 8",
+    latitude: 37.3804,
+    longitude: 128.6636,
     description: "정선 5일장 명물, 어른 얼굴만 한 맘모스빵이 유명",
   },
   {
@@ -161,6 +177,8 @@ description: "정선읍 45년 전통 중화요리 맛집, 해물짬뽕이 인기
     priceRange: "10,000~15,000원",
     hours: "11:00~20:30 (월 휴무)",
     address: "강원특별자치도 정선군 정선읍 중앙로 58",
+    latitude: 37.3785,
+    longitude: 128.6622,
     description: "두툼한 수제 돈카츠와 따뜻한 우동을 함께 즐기는 일식 전문점",
   },
   {

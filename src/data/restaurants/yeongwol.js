@@ -9,6 +9,8 @@ export const yeongwolRestaurants = [
     priceRange: "9,000~20,000원",
     hours: "10:00~19:30 (화 휴무)",
     address: "강원특별자치도 영월군 영월읍 청령포로 55",
+    latitude: 37.1843,
+    longitude: 128.4608,
     description: "청령포 인근 직접 뽑은 메밀면의 시원한 막국수가 유명한 맛집",
   },
   {
@@ -35,6 +37,8 @@ export const yeongwolRestaurants = [
     priceRange: "8,000~10,000원",
     hours: "07:00~19:00 (연중무휴)",
     address: "강원특별자치도 영월군 영월읍 동강로 88",
+    latitude: 37.1814,
+    longitude: 128.4627,
     description: "동강변 할머니가 직접 콩을 갈아 만드는 40년 순두부 맛집",
   },
   {
@@ -89,6 +93,8 @@ export const yeongwolRestaurants = [
     priceRange: "13,000~19,000원",
     hours: "11:30~20:30 (월 휴무)",
     address: "강원특별자치도 영월군 영월읍 중앙로 67",
+    latitude: 37.1855,
+    longitude: 128.4607,
 description: "영월읍 골목 속 아담한 이탈리안 파스타 전문점",
   },
   {
@@ -115,6 +121,8 @@ description: "영월읍 골목 속 아담한 이탈리안 파스타 전문점",
     priceRange: "7,000~18,000원",
     hours: "11:00~20:00 (일 휴무)",
     address: "강원특별자치도 영월군 영월읍 중앙로 95",
+    latitude: 37.184,
+    longitude: 128.4624,
 description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유명",
   },
   {
@@ -127,6 +135,8 @@ description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유�
     priceRange: "4,500~8,000원",
     hours: "10:00~20:00 (수 휴무)",
     address: "강원특별자치도 영월군 영월읍 장릉로 20",
+    latitude: 37.1832,
+    longitude: 128.463,
     description: "장릉 인근 한옥을 개조한 고즈넉한 분위기의 감성 카페",
   },
   {
@@ -139,6 +149,8 @@ description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유�
     priceRange: "2,500~5,000원",
     hours: "08:00~17:00 (일 휴무)",
     address: "강원특별자치도 영월군 영월읍 중앙시장길 10",
+    latitude: 37.1829,
+    longitude: 128.459,
     description: "영월전통시장 명물, 한 입 크기 꼬마김밥이 인기",
   },
   {
@@ -151,6 +163,8 @@ description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유�
     priceRange: "12,000~17,000원",
     hours: "15:00~22:00 (화 휴무)",
     address: "강원특별자치도 영월군 영월읍 중앙로 108",
+    latitude: 37.1864,
+    longitude: 128.4623,
     description: "바삭한 튀김옷의 추억의 옛날통닭을 맛볼 수 있는 동네 치킨집",
   },
   {
@@ -163,6 +177,8 @@ description: "영월 읍내 40년 터줏대감 중국집, 불맛 짬뽕이 유�
     priceRange: "10,000~15,000원",
     hours: "11:00~20:30 (월 휴무)",
     address: "강원특별자치도 영월군 영월읍 하송로 42",
+    latitude: 37.1857,
+    longitude: 128.4626,
 description: "직접 빻은 생빵가루로 바삭하게 튀겨내는 수제 돈카츠 전문점",
   },
   {

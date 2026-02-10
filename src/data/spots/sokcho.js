@@ -141,6 +141,8 @@ export const socchoSpots = [
     emoji: "🧗",
     description: "설악산 대표 명소로 873m 높이 거대 화강암 바위 봉우리",
     address: "강원특별자치도 속초시 설악산로 1091",
+    latitude: 38.1869,
+    longitude: 128.4665,
     hours: "상시",
     tip: "흔들바위에서 포토 필수. 정상까지 약 4km 왕복 3~4시간 소요",
     duration: "3~4시간",

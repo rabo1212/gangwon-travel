@@ -65,6 +65,8 @@ export const hwacheonRestaurants = [
     priceRange: "9,000~15,000원",
     hours: "10:00~19:30 (목 휴무)",
     address: "강원특별자치도 화천군 상서면 다목리길 25",
+    latitude: 38.1065,
+    longitude: 127.7073,
     description: "국산 콩으로 매일 아침 직접 만드는 고소한 손두부 전문점",
   },
   {
@@ -77,6 +79,8 @@ export const hwacheonRestaurants = [
     priceRange: "8,000~12,000원",
     hours: "09:00~19:00 (일 휴무)",
     address: "강원특별자치도 화천군 화천읍 평화로 3099",
+    latitude: 38.1063,
+    longitude: 127.7087,
     description: "직접 만든 도토리묵과 들깨칼국수로 유명한 소박한 시골 밥집",
   },
   {
@@ -103,6 +107,8 @@ export const hwacheonRestaurants = [
     priceRange: "11,000~16,000원",
     hours: "11:00~20:30 (화 휴무)",
     address: "강원특별자치도 화천군 화천읍 산천어길 45",
+    latitude: 38.1074,
+    longitude: 127.7101,
     description: "숲속 분위기의 인테리어에서 즐기는 수제 파스타와 리조또",
   },
   {
@@ -129,6 +135,8 @@ export const hwacheonRestaurants = [
     priceRange: "4,500~7,500원",
     hours: "10:00~21:00 (연중무휴)",
     address: "강원특별자치도 화천군 화천읍 산천어길 100",
+    latitude: 38.1047,
+    longitude: 127.7083,
     description: "산천어축제장 인근 카페, 화천 테마 시그니처 음료가 인기",
   },
   {
@@ -183,6 +191,8 @@ export const hwacheonRestaurants = [
     priceRange: "4,500~7,500원",
     hours: "10:00~19:00 (화 휴무)",
     address: "강원특별자치도 화천군 간동면 파로호로 580",
+    latitude: 38.1091,
+    longitude: 127.7091,
 description: "파로호가 내려다보이는 레이크뷰 베이커리 카페, 수제 스콘이 시그니처",
   },
 ];

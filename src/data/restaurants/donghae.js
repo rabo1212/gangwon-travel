@@ -23,6 +23,8 @@ export const donghaeRestaurants = [
     priceRange: "1만~2만원",
     hours: "09:30~20:30 (월 휴무)",
     address: "강원특별자치도 동해시 묵호진동로 27",
+    latitude: 37.5629,
+    longitude: 129.1197,
     description: "여름철 시원한 한치물회로 유명한 항구 맛집",
   },
   {
@@ -91,6 +93,8 @@ export const donghaeRestaurants = [
     priceRange: "1만~2만원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 동해시 해안로 710",
+    latitude: 37.5246,
+    longitude: 129.1127,
 description: "동해 바다가 보이는 오션뷰 파스타 전문점",
   },
   {
@@ -117,6 +121,8 @@ description: "동해 바다가 보이는 오션뷰 파스타 전문점",
     priceRange: "8,000~20,000원",
     hours: "11:00~21:00 (일 휴무)",
     address: "강원특별자치도 동해시 천곡로 122",
+    latitude: 37.524,
+    longitude: 129.1161,
     description: "바삭한 찹쌀탕수육으로 소문난 동네 중국집",
   },
   {

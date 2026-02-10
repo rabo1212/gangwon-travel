@@ -111,6 +111,8 @@ export const taebaekSpots = [
     emoji: "🥩",
     description: "고원 한우를 저렴하게 즐길 수 있는 태백 대표 먹거리 거리",
     address: "강원특별자치도 태백시 번영로 15",
+    latitude: 37.1642,
+    longitude: 128.9839,
     hours: "11:00~21:00",
     tip: "생고기 한우와 곁들이는 막장이 별미. 점심 특선 메뉴 노려보기",
     duration: "1~2시간",

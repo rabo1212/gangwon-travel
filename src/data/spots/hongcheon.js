@@ -111,6 +111,8 @@ export const hongcheonSpots = [
     emoji: "🥩",
     description: "전국 3대 한우 산지 홍천에서 즐기는 신선한 한우",
     address: "강원특별자치도 홍천군 홍천읍 희망로 70",
+    latitude: 37.6972,
+    longitude: 127.889,
     hours: "11:00~21:00",
     tip: "1++ 등급 한우 꽃등심 추천, 주말 점심 웨이팅 있음",
     duration: "1~2시간",

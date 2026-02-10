@@ -51,6 +51,8 @@ export const injeRestaurants = [
     priceRange: "20,000~35,000원",
     hours: "10:30~21:00 (수 휴무)",
     address: "강원특별자치도 인제군 인제읍 인제로 187",
+    latitude: 38.0672,
+    longitude: 128.1688,
     description: "내린천 맑은 물에서 키운 송어를 회와 매운탕으로 즐기는 곳",
   },
   {
@@ -77,6 +79,8 @@ export const injeRestaurants = [
     priceRange: "7,000~10,000원",
     hours: "10:00~18:30 (목 휴무)",
     address: "강원특별자치도 인제군 인제읍 합강로 23",
+    latitude: 38.067,
+    longitude: 128.1699,
     description: "합강정 옆에서 운영하는 토속 막국수집, 메밀전병도 인기",
   },
   {
@@ -89,6 +93,8 @@ export const injeRestaurants = [
     priceRange: "14,000~24,000원",
     hours: "11:30~21:00 (월 휴무)",
     address: "강원특별자치도 인제군 인제읍 인제로 156",
+    latitude: 38.0697,
+    longitude: 128.1693,
     description: "인제읍내 분위기 좋은 양식 레스토랑, 와인 페어링 가능",
   },
   {
@@ -101,6 +107,8 @@ export const injeRestaurants = [
     priceRange: "12,000~18,000원",
     hours: "11:00~20:30 (화 휴무)",
     address: "강원특별자치도 인제군 인제읍 비봉로 70",
+    latitude: 38.0676,
+    longitude: 128.1716,
     description: "설악산 여행객들에게 인기 있는 수제 피자와 파스타 전문점",
   },
   {
@@ -169,6 +177,8 @@ export const injeRestaurants = [
     priceRange: "10,000~15,000원",
     hours: "11:00~20:30 (화 휴무)",
     address: "강원특별자치도 인제군 인제읍 비봉로 55",
+    latitude: 38.0719,
+    longitude: 128.1711,
 description: "두툼한 등심을 바삭하게 튀겨낸 수제 돈카츠와 우동 세트 전문점",
   },
   {
@@ -181,6 +191,8 @@ description: "두툼한 등심을 바삭하게 튀겨낸 수제 돈카츠와 우
     priceRange: "4,500~8,000원",
     hours: "10:00~20:00 (수 휴무)",
     address: "강원특별자치도 인제군 북면 설악로 2750",
+    latitude: 38.0685,
+    longitude: 128.1732,
     description: "설악산 가는 길목의 베이커리 카페, 매일 굽는 수제 케이크가 인기",
   },
 ];

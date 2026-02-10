@@ -36,6 +36,8 @@ export const injeSpots = [
     emoji: "🐟",
     description: "소양호에서 펼쳐지는 겨울 빙어낚시 축제와 다양한 겨울 체험",
     address: "강원특별자치도 인제군 남면 부평리 616",
+    latitude: 38.0671,
+    longitude: 128.1715,
     hours: "09:00~18:00",
     tip: "1월 말~2월 초 개최. 빙어튀김은 축제 현장에서 바로 맛볼 수 있음",
     duration: "반나절",

@@ -9,6 +9,8 @@ export const goseongRestaurants = [
     priceRange: "40,000~80,000원",
     hours: "10:00~21:00 (연중무휴)",
     address: "강원특별자치도 고성군 거진읍 거진항로 45",
+    latitude: 38.379,
+    longitude: 128.4653,
     description: "거진항에서 당일 경매로 구입한 활 대게를 찜과 구이로 즐기는 곳",
   },
   {
@@ -35,6 +37,8 @@ export const goseongRestaurants = [
     priceRange: "8,000~12,000원",
     hours: "10:00~19:00 (월 휴무)",
     address: "강원특별자치도 고성군 현내면 통일전망대로 400",
+    latitude: 38.3829,
+    longitude: 128.4693,
     description: "통일전망대 가는 길목에서 메밀전병과 막국수를 맛볼 수 있는 곳",
   },
   {
@@ -89,6 +93,8 @@ export const goseongRestaurants = [
     priceRange: "18,000~32,000원",
     hours: "11:30~21:00 (월·화 휴무)",
     address: "강원특별자치도 고성군 죽왕면 해파랑길 22",
+    latitude: 38.3775,
+    longitude: 128.4663,
     description: "동해 바다가 보이는 오션뷰 레스토랑, 해산물 이탈리안 요리 전문",
   },
   {
@@ -101,6 +107,8 @@ export const goseongRestaurants = [
     priceRange: "16,000~24,000원",
     hours: "11:00~20:30 (수 휴무)",
     address: "강원특별자치도 고성군 토성면 봉포해변길 35",
+    latitude: 38.3822,
+    longitude: 128.4696,
     description: "고성 대게살을 듬뿍 넣은 크림파스타가 시그니처인 해변 레스토랑",
   },
   {
@@ -141,6 +149,8 @@ export const goseongRestaurants = [
     priceRange: "3,500~7,000원",
     hours: "10:00~18:00 (일 휴무)",
     address: "강원특별자치도 고성군 간성읍 수성로 21",
+    latitude: 38.3812,
+    longitude: 128.47,
 description: "간성시장 입구에서 갓 찐 왕만두와 매콤 떡볶이를 파는 분식점",
   },
   {

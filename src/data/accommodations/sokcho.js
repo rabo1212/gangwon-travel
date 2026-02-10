@@ -95,6 +95,8 @@ export const sokchoAccommodations = [
     type: "펜션",
     priceRange: "80,000~140,000원",
     address: "강원특별자치도 속초시 설악산로 680",
+    latitude: 38.2067,
+    longitude: 128.594,
     description: "설악산 자락 숲속 힐링 펜션",
     features: ["마운틴뷰", "바베큐", "무료 주차", "온천"],
     checkIn: "15:00",

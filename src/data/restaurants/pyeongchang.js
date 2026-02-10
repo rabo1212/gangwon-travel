@@ -65,6 +65,8 @@ export const pyeongchangRestaurants = [
     priceRange: "8,000~10,000원",
     hours: "09:00~18:00 (연중무휴)",
     address: "강원특별자치도 평창군 진부면 진부시장길 40",
+    latitude: 37.3735,
+    longitude: 128.3881,
     description: "진부 오일장에서 50년간 감자옹심이를 빚어온 원조 칼국수집",
   },
   {
@@ -91,6 +93,8 @@ export const pyeongchangRestaurants = [
     priceRange: "25,000~50,000원",
     hours: "11:30~21:00 (화 휴무)",
     address: "강원특별자치도 평창군 대관령면 솔봉로 350",
+    latitude: 37.3703,
+    longitude: 128.3883,
     description: "알펜시아리조트 인근 고급 양식 레스토랑, 코스 요리 추천",
   },
   {
@@ -117,6 +121,8 @@ export const pyeongchangRestaurants = [
     priceRange: "13,000~18,000원",
     hours: "11:30~20:00 (월 휴무)",
     address: "강원특별자치도 평창군 봉평면 봉평장터길 55",
+    latitude: 37.3732,
+    longitude: 128.3927,
     description: "봉평 메밀을 활용한 일본식 소바를 선보이는 퓨전 맛집",
   },
   {
@@ -143,6 +149,8 @@ export const pyeongchangRestaurants = [
     priceRange: "4,000~8,000원",
     hours: "09:00~17:00 (연중무휴)",
     address: "강원특별자치도 평창군 봉평면 봉평장터길 28",
+    latitude: 37.372,
+    longitude: 128.3927,
     description: "봉평장 장날이면 줄 서는 메밀전과 감자전 명소",
   },
   {

@@ -81,6 +81,8 @@ export const yangyangSpots = [
     emoji: "🥾",
     description: "설악산 남설악 주전골의 기암괴석과 계곡미를 감상하는 트레킹 코스",
     address: "강원특별자치도 양양군 서면 오색리 산2",
+    latitude: 38.0757,
+    longitude: 128.6197,
     hours: "상시",
     tip: "오색약수에서 출발하는 코스가 가장 인기. 왕복 약 2시간, 난이도 보통",
     duration: "2~3시간",

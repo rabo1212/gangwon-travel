@@ -24,6 +24,8 @@ export const hongcheonRestaurants = [
     priceRange: "40,000~70,000원",
     hours: "11:30~21:30 (화 휴무)",
     address: "강원특별자치도 홍천군 홍천읍 중앙로 55",
+    latitude: 37.6968,
+    longitude: 127.8885,
     description: "홍천 축협 인증 한우를 숯불에 구워 먹는 프리미엄 한우 맛집",
   },
   {
@@ -50,6 +52,8 @@ export const hongcheonRestaurants = [
     priceRange: "8,000~12,000원",
     hours: "10:30~19:00 (목 휴무)",
     address: "강원특별자치도 홍천군 내면 내린천로 205",
+    latitude: 37.6987,
+    longitude: 127.8847,
     description: "내면 메밀꽃밭 인근 직접 갈은 메밀로 만드는 전통 국수집",
   },
   {
@@ -76,6 +80,8 @@ export const hongcheonRestaurants = [
     priceRange: "13,000~18,000원",
     hours: "09:30~20:00 (연중무휴)",
     address: "강원특별자치도 홍천군 동면 수타사로 155",
+    latitude: 37.6991,
+    longitude: 127.8885,
     description: "수타사 인근 더덕과 산채나물이 풍성한 한정식 전문점",
   },
 
@@ -136,6 +142,8 @@ export const hongcheonRestaurants = [
     priceRange: "7,000~18,000원",
     hours: "11:00~20:30 (일 휴무)",
     address: "강원특별자치도 홍천군 홍천읍 중앙로 92",
+    latitude: 37.6967,
+    longitude: 127.885,
     description: "홍천읍 터줏대감 중화요리집, 간짜장이 일품",
   },
 
@@ -150,6 +158,8 @@ export const hongcheonRestaurants = [
     priceRange: "3,500~7,000원",
     hours: "10:00~19:00 (일 휴무)",
     address: "강원특별자치도 홍천군 홍천읍 홍천역길 15",
+    latitude: 37.6945,
+    longitude: 127.8882,
     description: "홍천역 앞 학생들의 소울푸드, 밀떡볶이가 유명한 분식집",
   },
   {

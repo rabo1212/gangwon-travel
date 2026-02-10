@@ -52,6 +52,8 @@ export const cheorwonRestaurants = [
     priceRange: "7,000~9,000원",
     hours: "10:00~19:00 (화 휴무)",
     address: "강원특별자치도 철원군 동송읍 금강로 211",
+    latitude: 38.1445,
+    longitude: 127.3156,
     description: "매일 아침 반죽하는 쫄깃한 손칼국수와 감자전이 인기",
   },
   {
@@ -126,6 +128,8 @@ export const cheorwonRestaurants = [
     priceRange: "8,000~12,000원",
     hours: "11:00~20:30 (일 휴무)",
     address: "강원특별자치도 철원군 동송읍 금강로 185",
+    latitude: 38.1482,
+    longitude: 127.3105,
     description: "30년 전통의 칼칼한 해물짬뽕과 탕수육이 유명한 중화요리 전문점",
   },
 
@@ -170,6 +174,8 @@ export const cheorwonRestaurants = [
     priceRange: "5,000~8,000원",
     hours: "10:00~20:00 (연중무휴)",
     address: "강원특별자치도 철원군 동송읍 태봉로 1790",
+    latitude: 38.1449,
+    longitude: 127.3144,
     description: "한탄강 주상절리가 보이는 대형 통유리 창이 인상적인 뷰 카페",
   },
   {
@@ -182,6 +188,8 @@ export const cheorwonRestaurants = [
     priceRange: "3,000~6,500원",
     hours: "08:00~18:00 (월 휴무)",
     address: "강원특별자치도 철원군 철원읍 금강산로 50",
+    latitude: 38.1451,
+    longitude: 127.3157,
     description: "철원 오대쌀로 만든 쫄깃한 쌀식빵이 오전에 완판되는 베이커리",
   },
 ];
