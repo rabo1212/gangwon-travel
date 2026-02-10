@@ -333,7 +333,7 @@ export default function ShareSection({ route, zone, vibes, duration, travelMode 
 
         {/* 에러 메시지 */}
         {saveError && (
-          <div className="mb-3 p-3 bg-red-50 text-red-600 text-sm rounded-xl text-center">
+          <div className="mb-3 p-3 text-sm rounded-xl text-center" style={{ background: "rgba(239, 68, 68, 0.1)", color: "#EF4444", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
             {saveError}
           </div>
         )}

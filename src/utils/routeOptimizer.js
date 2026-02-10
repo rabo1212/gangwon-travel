@@ -142,10 +142,21 @@ function assignClustersToDay(clusters, days, spotsPerDay = 4) {
     if (!dayGroups[dayIdx].cluster) dayGroups[dayIdx].cluster = cluster;
   }
 
-  // 빈 Day가 있으면 첫 번째 Day에서 분배
+  // 빈 Day가 있으면 스팟이 많은 Day에서 분배
   for (let d = 0; d < days; d++) {
-    if (dayGroups[d].spots.length === 0 && dayGroups[0].spots.length > 1) {
-      dayGroups[d].spots.push(dayGroups[0].spots.pop());
+    if (dayGroups[d].spots.length === 0) {
+      // 가장 스팟이 많은 Day 찾기
+      let maxIdx = 0;
+      let maxLen = 0;
+      for (let j = 0; j < days; j++) {
+        if (dayGroups[j].spots.length > maxLen) {
+          maxLen = dayGroups[j].spots.length;
+          maxIdx = j;
+        }
+      }
+      if (maxLen > 1) {
+        dayGroups[d].spots.push(dayGroups[maxIdx].spots.pop());
+      }
     }
   }
 

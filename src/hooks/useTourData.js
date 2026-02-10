@@ -41,7 +41,7 @@ export function useTourData(fetchFn, key) {
 
   useEffect(() => {
     refetch();
-  }, [key]);
+  }, [refetch]);
 
   return { data, loading, error, refetch };
 }

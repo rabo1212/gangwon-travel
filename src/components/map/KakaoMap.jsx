@@ -258,23 +258,23 @@ const KakaoMap = forwardRef(function KakaoMap(
 
   if (error) {
     return (
-      <div className="w-full bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl p-5">
+      <div className="w-full rounded-2xl p-5" style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)" }}>
         <div className="text-center mb-4">
-          <MapIcon className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-400">{error}</p>
+          <MapIcon className="w-8 h-8 mx-auto mb-2" style={{ color: "var(--text-muted)" }} />
+          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{error}</p>
         </div>
         {allPlaces.length > 0 && (
           <div className="space-y-1.5">
             {allPlaces.slice(0, 8).map((p, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
-                <span className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 flex-shrink-0">
+              <div key={i} className="flex items-center gap-2 text-xs" style={{ color: "var(--text-secondary)" }}>
+                <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0" style={{ background: "rgba(0, 102, 204, 0.15)", color: "#0066CC" }}>
                   {i + 1}
                 </span>
                 <span>{p.name}</span>
               </div>
             ))}
             {allPlaces.length > 8 && (
-              <p className="text-[10px] text-gray-300 ml-7">+{allPlaces.length - 8}곳 더</p>
+              <p className="text-[10px] ml-7" style={{ color: "var(--text-muted)" }}>+{allPlaces.length - 8}곳 더</p>
             )}
           </div>
         )}
@@ -292,17 +292,18 @@ const KakaoMap = forwardRef(function KakaoMap(
       />
       <button
         onClick={onToggleExpand}
-        className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-md border border-gray-200 hover:bg-white transition-colors"
+        className="absolute top-3 right-3 z-10 backdrop-blur-sm rounded-xl p-2 shadow-md transition-colors"
+        style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", color: "var(--text-secondary)" }}
         aria-label={expanded ? "지도 축소" : "지도 확대"}
       >
         {expanded ? (
-          <Minimize2 className="w-4 h-4 text-gray-600" />
+          <Minimize2 className="w-4 h-4" />
         ) : (
-          <Maximize2 className="w-4 h-4 text-gray-600" />
+          <Maximize2 className="w-4 h-4" />
         )}
       </button>
       {itinerary.length > 1 && (
-        <div className="absolute bottom-3 left-3 z-10 bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-gray-200 flex gap-3">
+        <div className="absolute bottom-3 left-3 z-10 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md flex gap-3" style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)" }}>
           {itinerary.map((day, i) => {
             const isActive = activeDay === null || activeDay === i;
             return (
@@ -311,7 +312,7 @@ const KakaoMap = forwardRef(function KakaoMap(
                   className="w-3 h-3 rounded-full"
                   style={{ background: DAY_COLORS[i % DAY_COLORS.length] }}
                 />
-                <span className="text-xs font-medium text-gray-600">{day.day}일차</span>
+                <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>{day.day}일차</span>
               </div>
             );
           })}

@@ -1,0 +1,60 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A1A2E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00E68A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00B4D8;stop-opacity:1" />
+    </linearGradient>
+    <!-- Subtle grid pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    </pattern>
+    <!-- Glow filter for accent text -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Decorative circles -->
+  <circle cx="950" cy="120" r="200" fill="rgba(0,230,138,0.04)" />
+  <circle cx="200" cy="500" r="150" fill="rgba(0,180,216,0.04)" />
+
+  <!-- Top accent line -->
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+
+  <!-- GANGWON TRAVEL label -->
+  <text x="600" y="220" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="600" letter-spacing="8" fill="#00E68A" filter="url(#glow)">GANGWON TRAVEL</text>
+
+  <!-- DB-DEEP main title -->
+  <text x="600" y="330" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="96" font-weight="800" fill="white">DB-DEEP</text>
+
+  <!-- Korean subtitle -->
+  <text x="600" y="390" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="400" fill="rgba(255,255,255,0.7)">강원도 맞춤 여행 루트 추천</text>
+
+  <!-- Divider line -->
+  <rect x="525" y="420" width="150" height="2" rx="1" fill="url(#accent)" opacity="0.6"/>
+
+  <!-- Bottom stats -->
+  <text x="420" y="480" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="600" fill="#00E68A">18</text>
+  <text x="420" y="505" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.5)">시군구</text>
+
+  <text x="600" y="480" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="600" fill="#00E68A">170+</text>
+  <text x="600" y="505" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.5)">관광지</text>
+
+  <text x="780" y="480" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="600" fill="#00E68A">250+</text>
+  <text x="780" y="505" text-anchor="middle" font-family="'Helvetica Neue', Arial, sans-serif" font-size="14" fill="rgba(255,255,255,0.5)">맛집</text>
+
+  <!-- Bottom accent line -->
+  <rect x="0" y="626" width="1200" height="4" fill="url(#accent)"/>
+</svg>
