@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "@vercel/og": "^0.8.6",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.563.0",
     "qrcode.react": "^4.2.0",

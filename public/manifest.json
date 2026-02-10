@@ -1,0 +1,21 @@
+{
+  "name": "DB-DEEP 강원 — 맞춤 여행 루트 추천",
+  "short_name": "DB-DEEP 강원",
+  "description": "강원도 18개 시군구 맞춤 여행 루트 추천. 취향에 맞는 관광지, 맛집, 숙소를 한번에!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1A1A2E",
+  "theme_color": "#1A1A2E",
+  "orientation": "portrait-primary",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["travel", "lifestyle"],
+  "prefer_related_applications": false
+}

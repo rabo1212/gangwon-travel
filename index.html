@@ -2,7 +2,9 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="DB-DEEP 강원 — 강원도 18개 시군구 맞춤 여행 루트 추천. 여행 스타일, 음식 취향에 맞는 관광지, 맛집, 숙소를 한번에!" />
     <meta name="keywords" content="강원도 여행, 강원도 관광, 강원도 맛집, 강원도 숙소, 여행 루트, 춘천, 강릉, 속초, DB-DEEP, 디비디비딥" />
@@ -10,13 +12,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+    <!-- 검색엔진 인증 (TODO: 각 서비스에서 코드 발급 후 content 값 교체) -->
+    <!-- <meta name="naver-site-verification" content="여기에_네이버_인증코드" /> -->
+    <!-- <meta name="google-site-verification" content="여기에_구글_인증코드" /> -->
+
     <!-- Open Graph (카카오톡, 페이스북 공유 미리보기) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="DB-DEEP 강원" />
     <meta property="og:title" content="DB-DEEP 강원 — 나만의 강원도 여행 루트" />
     <meta property="og:description" content="170+ 관광지, 250+ 맛집 데이터 기반. 취향에 맞는 강원도 여행 루트를 만들어보세요." />
     <meta property="og:url" content="https://gangwon-app.vercel.app" />
-    <meta property="og:image" content="https://source.unsplash.com/1200x630/?gangwon,korea,travel" />
+    <meta property="og:image" content="https://gangwon-app.vercel.app/api/og" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ko_KR" />
@@ -25,11 +31,52 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="DB-DEEP 강원 — 나만의 강원도 여행 루트" />
     <meta name="twitter:description" content="170+ 관광지, 250+ 맛집 데이터 기반 맞춤 여행 루트 추천" />
-    <meta name="twitter:image" content="https://source.unsplash.com/1200x630/?gangwon,korea,travel" />
+    <meta name="twitter:image" content="https://gangwon-app.vercel.app/api/og" />
+
+    <!-- 구조화 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DB-DEEP 강원",
+      "url": "https://gangwon-app.vercel.app",
+      "description": "강원도 18개 시군구 맞춤 여행 루트 추천 서비스",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "DB-DEEP"
+      },
+      "about": {
+        "@type": "Place",
+        "name": "강원특별자치도",
+        "address": {
+          "@type": "PostalAddress",
+          "addressRegion": "강원특별자치도",
+          "addressCountry": "KR"
+        }
+      }
+    }
+    </script>
 
     <title>DB-DEEP 강원 — 맞춤 여행 루트 추천</title>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=af2fb98bb171bd8c36e50fb3fd1fc929&autoload=false"></script>
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" integrity="sha384-DKYJZ8NLiK8MN4/C5P2ezmFLoigBoYbtoVYLEDIga8KvhDB5D2ak0OB7TF38SN4" crossorigin="anonymous"></script>
+
+    <!-- Google Analytics 4 (TODO: G-XXXXXXXXXX를 실제 측정 ID로 교체) -->
+    <!-- GA4 설정법: https://analytics.google.com → 속성 만들기 → 측정 ID 복사 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
   </head>
   <body>
     <div id="root"></div>
