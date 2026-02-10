@@ -1,6 +1,10 @@
 // ===== 강원도 장소별 / 지역별 / 카테고리별 이미지 시스템 =====
 
-// 유명 장소 직접 매핑 (장소 이름 → Unsplash 이미지 ID)
+// TourAPI에서 수집한 실제 관광지/맛집 이미지 (한국관광공사 공식 사진)
+import spotImageUrls from "../data/spotImageUrls.json";
+import restaurantImageUrls from "../data/restaurantImageUrls.json";
+
+// 유명 장소 직접 매핑 (장소 이름 → Unsplash 이미지 ID) — 최후의 fallback
 const SPOT_IMAGES = {
   // 춘천
   "남이섬": "photo-1605379399642-870262d3d051",
@@ -247,10 +251,13 @@ function hashString(str) {
 }
 
 export function getSpotImageUrl(spot, width = 400, height = 300) {
-  // 1) 데이터에 imageUrl이 있으면 최우선
+  // 1) 데이터에 imageUrl이 있으면 최우선 (API 연동 또는 정적 데이터)
   if (spot.imageUrl) return spot.imageUrl;
 
-  // 2) 유명 장소 직접 매핑
+  // 2) TourAPI 수집 이미지 (한국관광공사 공식 사진)
+  if (spotImageUrls[spot.name]) return spotImageUrls[spot.name];
+
+  // 3) Unsplash 직접 매핑 (최후의 fallback)
   if (SPOT_IMAGES[spot.name]) {
     const id = SPOT_IMAGES[spot.name];
     return `https://images.unsplash.com/${id}?w=${width}&h=${height}&fit=crop&auto=format&q=80`;
@@ -272,10 +279,15 @@ export function getSpotImageUrl(spot, width = 400, height = 300) {
   return `https://images.unsplash.com/${id}?w=${width}&h=${height}&fit=crop&auto=format&q=80`;
 }
 
-// 음식점 이미지 URL (신규)
+// 음식점 이미지 URL
 export function getFoodImageUrl(item, width = 400, height = 250) {
+  // 1) 데이터에 imageUrl이 있으면 최우선
   if (item.imageUrl) return item.imageUrl;
 
+  // 2) TourAPI 수집 이미지
+  if (restaurantImageUrls[item.name]) return restaurantImageUrls[item.name];
+
+  // 3) Unsplash fallback
   const hash = hashString(item.name || "food");
   const isCafe = item.mealType === "카페" || item.genre === "카페/베이커리";
   const pool = isCafe ? FOOD_IMAGES["카페"] : (FOOD_IMAGES[item.genre] || FOOD_IMAGES["default"]);

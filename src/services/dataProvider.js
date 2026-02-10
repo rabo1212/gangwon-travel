@@ -6,14 +6,25 @@ import { ALL_RESTAURANTS } from "../data/restaurants";
 import { ALL_ACCOMMODATIONS } from "../data/accommodations";
 import * as tourApi from "./tourApiService";
 
-// 이름 기준 중복 제거 (정적 데이터 우선)
+// 이름 기준 중복 제거 (정적 데이터 우선) + API imageUrl 보충
 function mergeByName(staticData, apiData) {
+  // API 데이터를 이름으로 빠르게 찾을 수 있도록 Map 생성
+  const apiMap = new Map(apiData.map((item) => [item.name, item]));
+
+  // 정적 데이터에 imageUrl이 없고 API에 있으면 보충
+  const enrichedStatic = staticData.map((s) => {
+    const apiMatch = apiMap.get(s.name);
+    if (apiMatch && apiMatch.imageUrl && !s.imageUrl) {
+      return { ...s, imageUrl: apiMatch.imageUrl, source: "static" };
+    }
+    return { ...s, source: "static" };
+  });
+
+  // API에만 있는 새 항목 추가
   const staticNames = new Set(staticData.map((s) => s.name));
   const newItems = apiData.filter((item) => !staticNames.has(item.name));
-  return [
-    ...staticData.map((s) => ({ ...s, source: "static" })),
-    ...newItems,
-  ];
+
+  return [...enrichedStatic, ...newItems];
 }
 
 // ===== 관광지: 정적 + API =====
