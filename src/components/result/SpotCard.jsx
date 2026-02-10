@@ -21,6 +21,7 @@ export default function SpotCard({ item, isDark, onSwap, spotIndex, isFavorited,
 
   const imageUrl = getSpotImageUrl(item);
   const gradient = getSpotGradient(item.category);
+  const showImage = imageUrl && !imgError;
 
   return (
     <div className="-mx-5 -mt-5">
@@ -29,7 +30,7 @@ export default function SpotCard({ item, isDark, onSwap, spotIndex, isFavorited,
         className="relative overflow-hidden rounded-t-2xl cursor-pointer"
         onClick={() => onDetailOpen?.(item)}
       >
-        {!imgError ? (
+        {showImage ? (
           <img
             src={imageUrl}
             alt={item.name}
@@ -39,9 +40,10 @@ export default function SpotCard({ item, isDark, onSwap, spotIndex, isFavorited,
           />
         ) : (
           <div
-            className={`w-full aspect-[4/3] bg-gradient-to-br ${gradient} flex items-center justify-center`}
+            className={`w-full aspect-[4/3] bg-gradient-to-br ${gradient} flex flex-col items-center justify-center gap-2`}
           >
             <span className="text-5xl">{item.emoji}</span>
+            <span className="text-white/70 text-xs font-medium">{item.region}</span>
           </div>
         )}
 

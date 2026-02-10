@@ -5,12 +5,13 @@ import { getFoodImageUrl } from "../../utils/spotImages";
 export default function RestaurantCard({ item, isDark }) {
   const [imgError, setImgError] = useState(false);
   const imageUrl = getFoodImageUrl(item);
+  const showImage = imageUrl && !imgError;
 
   return (
     <div>
       {/* 음식 이미지 */}
       <div className="-mx-5 -mt-5 mb-4">
-        {!imgError ? (
+        {showImage ? (
           <img
             src={imageUrl}
             alt={item.name}
@@ -19,7 +20,7 @@ export default function RestaurantCard({ item, isDark }) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full aspect-[5/2] rounded-t-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
+          <div className="w-full aspect-[5/2] rounded-t-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center gap-2">
             <span className="text-4xl">{item.emoji}</span>
           </div>
         )}

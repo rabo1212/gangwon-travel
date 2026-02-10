@@ -22,12 +22,12 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
 
   if (!spot) return null;
 
-  // TourAPI 이미지가 있으면 우선 사용 (가짜 갤러리 대신 실제 이미지만)
-  const mainImage = spot.imageUrl || getSpotImageUrl(spot, 600, 300);
+  // 실제 이미지만 사용 (없으면 null → 그라데이션 fallback)
+  const mainImage = spot.imageUrl || getSpotImageUrl(spot);
   const hasSecondImage = !!spot.imageUrl2;
-  const images = hasSecondImage
-    ? [mainImage, spot.imageUrl2]
-    : [mainImage];
+  const images = mainImage
+    ? (hasSecondImage ? [mainImage, spot.imageUrl2] : [mainImage])
+    : [];
 
   // 상세정보에서 운영시간 보강
   const hours = detail?.intro?.usetime || detail?.intro?.usetimeculture || spot.hours;
@@ -56,7 +56,7 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
 
         {/* 이미지 */}
         <div className="px-4 pb-3">
-          {!imgErrors[0] ? (
+          {images.length > 0 && !imgErrors[0] ? (
             <div className={`rounded-xl overflow-hidden ${hasSecondImage ? "grid grid-cols-3 gap-1.5" : ""}`} style={{ aspectRatio: hasSecondImage ? "3/2" : "5/2" }}>
               <img
                 src={images[0]}
