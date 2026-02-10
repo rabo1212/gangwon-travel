@@ -21,8 +21,9 @@ export function useWizard() {
 
   const nextStep = useCallback(() => {
     if (isTransitioning) return;
+    if (step >= TOTAL_STEPS - 1) return;
     animateStep(step + 1);
-  }, [step, isTransitioning, animateStep]);
+  }, [step, isTransitioning, animateStep, TOTAL_STEPS]);
 
   const prevStep = useCallback(() => {
     if (isTransitioning) return;

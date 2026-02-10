@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     const [common, intro] = await Promise.all([
       callTourApi("detailCommon2", {
         contentId,
+        contentTypeId: contentTypeId || "",
         defaultYN: "Y",
         overviewYN: "Y",
         addrinfoYN: "Y",

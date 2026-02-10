@@ -25,6 +25,11 @@ export default function ItineraryDay({
         className="space-y-3 ml-5 pl-6"
         style={{ borderLeft: `2px solid ${isDark ? "rgba(0,102,204,0.3)" : "#DBEAFE"}` }}
       >
+        {day.schedule.length === 0 && (
+          <div className="py-8 text-center" style={{ color: "var(--text-muted)" }}>
+            <p className="text-sm">이 날의 일정이 아직 없어요</p>
+          </div>
+        )}
         {day.schedule.map((item, idx) => {
           const prevItem = idx > 0 ? day.schedule[idx - 1] : null;
           const showTravel =

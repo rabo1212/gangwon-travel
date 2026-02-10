@@ -8,15 +8,23 @@ export default function ProgressBar({ currentStep, totalSteps }) {
               i < currentStep
                 ? "bg-[#0066CC] scale-100"
                 : i === currentStep
-                ? "bg-[#0066CC] scale-125 ring-4 ring-blue-100"
-                : "bg-gray-200"
+                ? "bg-[#0066CC] scale-125 ring-4"
+                : ""
             }`}
+            style={
+              i === currentStep
+                ? { boxShadow: "0 0 0 4px rgba(0,102,204,0.2)" }
+                : i > currentStep
+                ? { background: "var(--text-muted)", opacity: 0.3 }
+                : undefined
+            }
           />
           {i < totalSteps - 1 && (
             <div
               className={`w-6 h-0.5 transition-all duration-500 ${
-                i < currentStep ? "bg-[#0066CC]" : "bg-gray-200"
+                i < currentStep ? "bg-[#0066CC]" : ""
               }`}
+              style={i >= currentStep ? { background: "var(--text-muted)", opacity: 0.3 } : undefined}
             />
           )}
         </div>

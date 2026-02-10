@@ -8,8 +8,6 @@ export const cheorwonSpots = [
     address: "강원특별자치도 철원군 동송읍 태봉로 1825",
     latitude: 38.1854214075637,
     longitude: 127.287403730162,
-    latitude: 38.1854214075637,
-    longitude: 127.287403730162,
     hours: "상시",
     tip: "잔도길 산책로를 따라 걸으면 협곡과 주상절리를 한눈에 감상 가능. 운동화 필수",
     duration: "1~2시간",

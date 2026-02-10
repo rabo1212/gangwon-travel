@@ -6,6 +6,7 @@ import { fetchDetail } from "../../services/tourApiService";
 export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives, onSwapRequest }) {
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [imgErrors, setImgErrors] = useState({});
 
   // TourAPI contentId가 있으면 상세정보 추가 로드
   useEffect(() => {
@@ -21,13 +22,12 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
 
   if (!spot) return null;
 
-  // TourAPI 이미지가 있으면 우선 사용
+  // TourAPI 이미지가 있으면 우선 사용 (가짜 갤러리 대신 실제 이미지만)
   const mainImage = spot.imageUrl || getSpotImageUrl(spot, 600, 300);
-  const images = [
-    mainImage,
-    spot.imageUrl2 || getSpotImageUrl({ ...spot, name: spot.name + "_2" }, 300, 200),
-    getSpotImageUrl({ ...spot, name: spot.name + "_3" }, 300, 200),
-  ];
+  const hasSecondImage = !!spot.imageUrl2;
+  const images = hasSecondImage
+    ? [mainImage, spot.imageUrl2]
+    : [mainImage];
 
   // 상세정보에서 운영시간 보강
   const hours = detail?.intro?.usetime || detail?.intro?.usetimeculture || spot.hours;
@@ -54,30 +54,35 @@ export default function SpotDetailModal({ spot, isDark, onClose, hasAlternatives
           <div className="w-10 h-1 rounded-full" style={{ background: "var(--text-muted)" }} />
         </div>
 
-        {/* 이미지 갤러리 */}
+        {/* 이미지 */}
         <div className="px-4 pb-3">
-          <div className="grid grid-cols-3 gap-1.5 rounded-xl overflow-hidden" style={{ aspectRatio: "3/2" }}>
-            <img
-              src={images[0]}
-              alt={spot.name}
-              className="col-span-2 w-full h-full object-cover"
-              loading="lazy"
-            />
-            <div className="flex flex-col gap-1.5 h-full">
+          {!imgErrors[0] ? (
+            <div className={`rounded-xl overflow-hidden ${hasSecondImage ? "grid grid-cols-3 gap-1.5" : ""}`} style={{ aspectRatio: hasSecondImage ? "3/2" : "5/2" }}>
               <img
-                src={images[1]}
+                src={images[0]}
                 alt={spot.name}
-                className="w-full flex-1 object-cover"
+                className={`${hasSecondImage ? "col-span-2" : ""} w-full h-full object-cover`}
                 loading="lazy"
+                onError={() => setImgErrors((p) => ({ ...p, 0: true }))}
               />
-              <img
-                src={images[2]}
-                alt={spot.name}
-                className="w-full flex-1 object-cover"
-                loading="lazy"
-              />
+              {hasSecondImage && !imgErrors[1] && (
+                <img
+                  src={images[1]}
+                  alt={spot.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  onError={() => setImgErrors((p) => ({ ...p, 1: true }))}
+                />
+              )}
             </div>
-          </div>
+          ) : (
+            <div
+              className="w-full rounded-xl flex items-center justify-center"
+              style={{ aspectRatio: "5/2", background: isDark ? "rgba(0,102,204,0.1)" : "#EFF6FF" }}
+            >
+              <span className="text-4xl">{spot.emoji}</span>
+            </div>
+          )}
         </div>
 
         {/* 장소 정보 */}

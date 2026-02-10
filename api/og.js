@@ -20,60 +20,18 @@ export default function handler() {
           overflow: "hidden",
         },
         children: [
-          // Background mountains
+          // Decorative circles
           {
             type: "div",
             props: {
               style: {
                 position: "absolute",
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: "300px",
-                display: "flex",
-                alignItems: "flex-end",
-              },
-              children: {
-                type: "svg",
-                props: {
-                  width: "1200",
-                  height: "300",
-                  viewBox: "0 0 1200 300",
-                  children: [
-                    {
-                      type: "path",
-                      props: {
-                        d: "M0 300 L200 80 L400 220 L600 40 L800 180 L1000 60 L1200 200 L1200 300 Z",
-                        fill: "#00A86B",
-                        opacity: "0.3",
-                      },
-                    },
-                    {
-                      type: "path",
-                      props: {
-                        d: "M0 300 L150 150 L350 250 L550 100 L750 220 L950 120 L1200 260 L1200 300 Z",
-                        fill: "#00A86B",
-                        opacity: "0.15",
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-          // Stars
-          {
-            type: "div",
-            props: {
-              style: {
-                position: "absolute",
-                top: "40px",
-                right: "80px",
-                width: "12px",
-                height: "12px",
+                bottom: "-60px",
+                left: "-40px",
+                width: "400px",
+                height: "400px",
                 borderRadius: "50%",
-                background: "white",
-                opacity: "0.6",
+                background: "rgba(0,168,107,0.12)",
               },
             },
           },
@@ -82,93 +40,106 @@ export default function handler() {
             props: {
               style: {
                 position: "absolute",
-                top: "80px",
-                right: "200px",
-                width: "8px",
-                height: "8px",
+                top: "-80px",
+                right: "-60px",
+                width: "350px",
+                height: "350px",
                 borderRadius: "50%",
-                background: "white",
-                opacity: "0.4",
+                background: "rgba(0,102,204,0.1)",
               },
             },
           },
+          // Top label
           {
             type: "div",
             props: {
               style: {
-                position: "absolute",
-                top: "60px",
-                left: "120px",
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                background: "white",
-                opacity: "0.3",
+                fontSize: "24px",
+                color: "#00E68A",
+                letterSpacing: "6px",
+                marginBottom: "12px",
+                fontWeight: "600",
               },
+              children: "GANGWON TRAVEL",
             },
           },
-          // Main content
+          // Main title
+          {
+            type: "div",
+            props: {
+              style: {
+                fontSize: "64px",
+                fontWeight: "800",
+                color: "white",
+                lineHeight: "1.2",
+                textAlign: "center",
+              },
+              children: "DB-DEEP",
+            },
+          },
+          // Subtitle
+          {
+            type: "div",
+            props: {
+              style: {
+                fontSize: "22px",
+                color: "rgba(255,255,255,0.6)",
+                marginTop: "16px",
+                textAlign: "center",
+              },
+              children: "18 regions, your perfect route",
+            },
+          },
+          // Tags row
           {
             type: "div",
             props: {
               style: {
                 display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                zIndex: 1,
+                gap: "12px",
+                marginTop: "28px",
               },
               children: [
                 {
                   type: "div",
                   props: {
                     style: {
-                      fontSize: "28px",
+                      fontSize: "15px",
+                      background: "rgba(0,168,107,0.25)",
                       color: "#00E68A",
-                      letterSpacing: "8px",
-                      marginBottom: "16px",
-                      fontWeight: 600,
+                      padding: "8px 18px",
+                      borderRadius: "20px",
+                      border: "1px solid rgba(0,168,107,0.4)",
                     },
-                    children: "GANGWON TRAVEL",
+                    children: "170+ Spots",
                   },
                 },
                 {
                   type: "div",
                   props: {
                     style: {
-                      fontSize: "72px",
-                      fontWeight: 800,
-                      color: "white",
-                      lineHeight: 1.1,
-                      textAlign: "center",
+                      fontSize: "15px",
+                      background: "rgba(0,168,107,0.25)",
+                      color: "#00E68A",
+                      padding: "8px 18px",
+                      borderRadius: "20px",
+                      border: "1px solid rgba(0,168,107,0.4)",
                     },
-                    children: "DB-DEEP 강원",
+                    children: "250+ Restaurants",
                   },
                 },
                 {
                   type: "div",
                   props: {
                     style: {
-                      fontSize: "24px",
-                      color: "rgba(255,255,255,0.7)",
-                      marginTop: "20px",
-                      textAlign: "center",
+                      fontSize: "15px",
+                      background: "rgba(0,168,107,0.25)",
+                      color: "#00E68A",
+                      padding: "8px 18px",
+                      borderRadius: "20px",
+                      border: "1px solid rgba(0,168,107,0.4)",
                     },
-                    children: "가볍게 누르고, 깊게 빠지다",
-                  },
-                },
-                {
-                  type: "div",
-                  props: {
-                    style: {
-                      display: "flex",
-                      gap: "12px",
-                      marginTop: "32px",
-                    },
-                    children: [
-                      { type: "span", props: { style: { fontSize: "16px", background: "rgba(0,168,107,0.3)", color: "#00E68A", padding: "8px 16px", borderRadius: "20px", border: "1px solid rgba(0,168,107,0.5)" }, children: "170+ 관광지" } },
-                      { type: "span", props: { style: { fontSize: "16px", background: "rgba(0,168,107,0.3)", color: "#00E68A", padding: "8px 16px", borderRadius: "20px", border: "1px solid rgba(0,168,107,0.5)" }, children: "250+ 맛집" } },
-                      { type: "span", props: { style: { fontSize: "16px", background: "rgba(0,168,107,0.3)", color: "#00E68A", padding: "8px 16px", borderRadius: "20px", border: "1px solid rgba(0,168,107,0.5)" }, children: "18개 시군구" } },
-                    ],
+                    children: "18 Cities",
                   },
                 },
               ],
@@ -177,9 +148,6 @@ export default function handler() {
         ],
       },
     },
-    {
-      width: 1200,
-      height: 630,
-    }
+    { width: 1200, height: 630 }
   );
 }

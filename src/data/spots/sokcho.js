@@ -8,8 +8,6 @@ export const socchoSpots = [
     address: "강원특별자치도 속초시 설악산로 1091",
     latitude: 38.1735063214345,
     longitude: 128.488471845965,
-    latitude: 38.1735063214345,
-    longitude: 128.488471845965,
     hours: "상시",
     tip: "권금성 케이블카로 쉽게 절경 감상 가능. 가을 단풍 시즌에는 새벽 출발 추천",
     duration: "반나절",

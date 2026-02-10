@@ -8,6 +8,8 @@ export default function SpotSwapModal({ currentSpot, alternatives, onSwap, onClo
     "체험/액티비티": { bg: isDark ? "rgba(249,115,22,0.15)" : "#FFEDD5", text: "#F97316" },
     "맛집/미식": { bg: isDark ? "rgba(239,68,68,0.15)" : "#FEE2E2", text: "#EF4444" },
     "문화/역사": { bg: isDark ? "rgba(59,130,246,0.15)" : "#DBEAFE", text: "#3B82F6" },
+    "포토스팟/감성": { bg: isDark ? "rgba(168,85,247,0.15)" : "#F3E8FF", text: "#A855F7" },
+    "자연/트레킹": { bg: isDark ? "rgba(34,197,94,0.15)" : "#D1FAE5", text: "#059669" },
   };
 
   return (
@@ -25,7 +27,7 @@ export default function SpotSwapModal({ currentSpot, alternatives, onSwap, onClo
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full flex items-center justify-center active:scale-95"
+            className="w-11 h-11 rounded-full flex items-center justify-center active:scale-95"
             style={{ background: "var(--bg-input)" }}
           >
             <X className="w-4 h-4" style={{ color: "var(--text-secondary)" }} />

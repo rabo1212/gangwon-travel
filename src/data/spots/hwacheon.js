@@ -23,8 +23,6 @@ export const hwacheonSpots = [
     address: "강원특별자치도 화천군 화천읍 산천어길 137",
     latitude: 38.1124868704272,
     longitude: 127.709852848785,
-    latitude: 38.1124868704272,
-    longitude: 127.709852848785,
     hours: "09:00~18:00",
     tip: "축제 기간(1월) 방문 시 사전 예약 필수. 방한 장비 철저히 준비하세요",
     duration: "반나절",

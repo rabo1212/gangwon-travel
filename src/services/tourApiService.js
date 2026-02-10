@@ -49,6 +49,11 @@ function stripHtml(str) {
   return str.replace(/<[^>]*>/g, "").trim();
 }
 
+function toHttps(url) {
+  if (!url) return null;
+  return url.replace(/^http:\/\//, "https://");
+}
+
 function guessAccommodationType(title) {
   if (!title) return "숙소";
   if (title.includes("호텔")) return "호텔";
@@ -78,8 +83,8 @@ export function mapToSpot(item, regionName) {
     duration: "1~2시간",
     photoSpot: false,
     trekking: category === "자연/트레킹",
-    imageUrl: item.firstimage || null,
-    imageUrl2: item.firstimage2 || null,
+    imageUrl: toHttps(item.firstimage),
+    imageUrl2: toHttps(item.firstimage2),
     contentId: item.contentid || null,
     contentTypeId: item.contenttypeid || null,
     source: "tourapi",
@@ -101,7 +106,7 @@ export function mapToRestaurant(item, regionName) {
     latitude: parseFloat(item.mapy) || 0,
     longitude: parseFloat(item.mapx) || 0,
     description: stripHtml(item.overview) || item.title || "",
-    imageUrl: item.firstimage || null,
+    imageUrl: toHttps(item.firstimage),
     contentId: item.contentid || null,
     source: "tourapi",
   };
@@ -112,6 +117,7 @@ export function mapToAccommodation(item, regionName) {
   return {
     name: item.title || "",
     type: guessAccommodationType(item.title),
+    region: regionName || "",
     priceRange: "",
     address: item.addr1 ? `${item.addr1}${item.addr2 ? " " + item.addr2 : ""}` : "",
     latitude: parseFloat(item.mapy) || 0,
@@ -121,7 +127,7 @@ export function mapToAccommodation(item, regionName) {
     checkIn: "15:00",
     checkOut: "11:00",
     tip: "",
-    imageUrl: item.firstimage || null,
+    imageUrl: toHttps(item.firstimage),
     contentId: item.contentid || null,
     source: "tourapi",
   };
@@ -150,7 +156,14 @@ export async function fetchDetail(contentId, contentTypeId) {
   const params = { contentId };
   if (contentTypeId) params.contentTypeId = contentTypeId;
   const query = new URLSearchParams(params).toString();
-  const res = await fetch(`${API_BASE}/detail?${query}`);
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(`${API_BASE}/detail?${query}`, {
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!res.ok) throw new Error(`Detail HTTP ${res.status}`);
+    const data = await res.json();
+    return data;
+  } catch {
+    return { success: false, common: null, intro: null };
+  }
 }

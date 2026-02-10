@@ -60,7 +60,17 @@ export default function ResultStep({ wizard, route, isDark }) {
 
   const displayRoute = modifiedRoute || route;
 
-  if (!displayRoute) return null;
+  if (!displayRoute) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg-primary)" }}>
+        <div className="text-center px-6">
+          <div className="w-12 h-12 border-4 border-[#00A86B] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>루트 생성 중...</p>
+          <p className="text-sm mt-2" style={{ color: "var(--text-muted)" }}>최적 여행 코스를 만들고 있어요</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSwapRequest = (dayIndex, scheduleIndex, spot) => {
     setSwapModal({ dayIndex, scheduleIndex, spot });

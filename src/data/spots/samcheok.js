@@ -8,8 +8,6 @@ export const samcheokSpots = [
     address: "강원특별자치도 삼척시 신기면 환선로 800",
     latitude: 37.3261284507389,
     longitude: 129.020903254935,
-    latitude: 37.3261284507389,
-    longitude: 129.020903254935,
     hours: "09:00~18:00",
     tip: "동굴 내부가 서늘하니 겉옷 준비, 모노레일 이용 추천",
     duration: "1~2시간",
