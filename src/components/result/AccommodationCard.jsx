@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MapPin, Lightbulb } from "lucide-react";
 
 const TYPE_EMOJIS = {
@@ -6,8 +7,22 @@ const TYPE_EMOJIS = {
 };
 
 export default function AccommodationCard({ item, isDark }) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <div>
+      {/* TourAPI 이미지가 있으면 표시 */}
+      {item.imageUrl && !imgError && (
+        <div className="-mx-5 -mt-5 mb-4">
+          <img
+            src={item.imageUrl}
+            alt={item.name}
+            className="w-full aspect-[5/2] object-cover rounded-t-2xl"
+            onError={() => setImgError(true)}
+            loading="lazy"
+          />
+        </div>
+      )}
       <div className="flex items-center gap-2 mb-1.5">
         <span className="text-xl">{TYPE_EMOJIS[item.type] || "🏨"}</span>
         <span

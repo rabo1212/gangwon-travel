@@ -1,7 +1,8 @@
-import { useState, useMemo, useCallback, lazy, Suspense } from "react";
+import { useState, useMemo, useCallback, useEffect, lazy, Suspense } from "react";
 import { useWizard } from "./hooks/useWizard";
 import { useTheme } from "./hooks/useTheme";
-import { generateRoute } from "./utils/routeOptimizer";
+import { generateRoute, setPreloadedSpots, setPreloadedAccommodations } from "./utils/routeOptimizer";
+import * as dataProvider from "./services/dataProvider";
 import WelcomeStep from "./components/steps/WelcomeStep";
 
 const ZoneVibeStep = lazy(() => import("./components/steps/ZoneVibeStep"));
@@ -23,6 +24,15 @@ export default function GangwonTravelApp() {
   const wizard = useWizard();
   const { isDark, toggleTheme } = useTheme();
   const [loadedRoute, setLoadedRoute] = useState(null);
+
+  // Zone 선택 시 API 데이터 프리로드 (routeOptimizer에서 사용)
+  useEffect(() => {
+    if (!wizard.selectedZone) return;
+    wizard.selectedZone.regions.forEach((region) => {
+      dataProvider.getSpots(region).then((spots) => setPreloadedSpots(region, spots));
+      dataProvider.getAccommodations(region).then((accom) => setPreloadedAccommodations(region, accom));
+    });
+  }, [wizard.selectedZone]);
 
   const route = useMemo(() => {
     if (loadedRoute) return loadedRoute;

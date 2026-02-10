@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Check, Store } from "lucide-react";
+import { Check, Store, Loader2 } from "lucide-react";
 import { REGIONAL_FOODS } from "../../data/regionalFoods";
+import { useRestaurants } from "../../hooks/useTourData";
 import StepHeader from "../ui/StepHeader";
 import ProgressBar from "../ui/ProgressBar";
 import BottomNav from "../ui/BottomNav";
@@ -9,9 +10,29 @@ export default function FoodPickerStep({ wizard }) {
   const { selectedRegions, selectedFoods, toggleFood, prevStep, nextStep, canProceed, TOTAL_STEPS } = wizard;
   const [activeTab, setActiveTab] = useState(selectedRegions[0] || "");
 
+  // TourAPI 음식점 데이터
+  const { data: apiRestaurants, loading: restaurantsLoading } = useRestaurants(activeTab);
+
   const foods = useMemo(() => {
-    return REGIONAL_FOODS[activeTab] || [];
-  }, [activeTab]);
+    const staticFoods = REGIONAL_FOODS[activeTab] || [];
+
+    // API 음식점이 있으면 추천 맛집 정보를 보강
+    if (apiRestaurants && apiRestaurants.length > 0) {
+      return staticFoods.map((food) => {
+        // 기존 추천 맛집에 API 음식점 추가 (이름 중복 제거)
+        const existingNames = new Set(food.restaurants.map((r) => r.name));
+        const apiMatches = apiRestaurants
+          .filter((r) => !existingNames.has(r.name) && r.source === "tourapi")
+          .slice(0, 2)
+          .map((r) => ({ name: r.name, priceRange: r.priceRange || "" }));
+        return {
+          ...food,
+          restaurants: [...food.restaurants, ...apiMatches],
+        };
+      });
+    }
+    return staticFoods;
+  }, [activeTab, apiRestaurants]);
 
   // 카테고리별 그룹
   const foodsByCategory = useMemo(() => {
@@ -76,6 +97,13 @@ export default function FoodPickerStep({ wizard }) {
                   </button>
                 </span>
               ))}
+            </div>
+          )}
+
+          {restaurantsLoading && (
+            <div className="flex items-center justify-center gap-2 py-2 mb-3 text-xs text-orange-500">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>추가 맛집 정보 불러오는 중...</span>
             </div>
           )}
 

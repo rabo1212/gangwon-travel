@@ -4,6 +4,21 @@ import { REGIONAL_FOODS } from "../data/regionalFoods";
 import { ALL_ACCOMMODATIONS } from "../data/accommodations";
 import { REGIONS } from "../data/regions";
 
+// ─── API 데이터 프리로드 캐시 ───
+// preloadDataForZone()으로 미리 로드한 데이터를 여기에 저장
+const apiCache = {
+  spots: {},        // { "강릉시": [...], ... }
+  accommodations: {},
+};
+
+export function setPreloadedSpots(region, spots) {
+  apiCache.spots[region] = spots;
+}
+
+export function setPreloadedAccommodations(region, accommodations) {
+  apiCache.accommodations[region] = accommodations;
+}
+
 // ─── 시간 유틸 ───
 function formatTime(totalMinutes) {
   const rounded = Math.ceil(totalMinutes / 5) * 5;
@@ -28,14 +43,18 @@ function getDayCount(duration) {
   return 3;
 }
 
-// ─── Zone 내 스팟 가져오기 ───
+// ─── Zone 내 스팟 가져오기 (API 캐시 우선) ───
 function getSpotsByZone(zone) {
   const spots = [];
+  const seen = new Set();
   zone.regions.forEach((region) => {
-    const regionSpots = ALL_SPOTS[region] || [];
+    // API 프리로드 데이터가 있으면 우선 사용 (정적+API 병합됨)
+    const regionSpots = apiCache.spots[region] || ALL_SPOTS[region] || [];
     regionSpots.forEach((spot) => {
-      if (spot.latitude && spot.longitude) {
-        spots.push({ ...spot, region });
+      const key = spot.name + (spot.region || region);
+      if (spot.latitude && spot.longitude && !seen.has(key)) {
+        seen.add(key);
+        spots.push({ ...spot, region: spot.region || region });
       }
     });
   });
@@ -406,8 +425,9 @@ export function generateRoute({ selectedZone, selectedVibes, duration, travelMod
 
       const dayAccom = [];
       dayRegions.forEach((regionName) => {
-        const regionAccom = ALL_ACCOMMODATIONS[regionName] || [];
-        regionAccom.forEach((a) => dayAccom.push({ ...a, region: regionName }));
+        // API 프리로드 데이터 우선 사용
+        const regionAccom = apiCache.accommodations[regionName] || ALL_ACCOMMODATIONS[regionName] || [];
+        regionAccom.forEach((a) => dayAccom.push({ ...a, region: a.region || regionName }));
       });
       accommodationOptions = dayAccom.slice(0, 3);
     }
